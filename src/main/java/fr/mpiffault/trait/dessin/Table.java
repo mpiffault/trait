@@ -43,6 +43,11 @@ public class Table extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        paintDrawables(g2);
+        paintModeLabel(g2);
+    }
+
+    private void paintDrawables(Graphics2D g2) {
         for (LinkedList<Drawable> layer : layers) {
             for (Drawable drawable : layer) {
                 if (drawable instanceof Selectable && selected.contains(drawable)) {
@@ -52,7 +57,11 @@ public class Table extends JPanel {
                 }
             }
         }
+    }
 
+    private void paintModeLabel(Graphics2D g2) {
+        g2.setColor(Color.RED);
+        g2.drawString(currentMode.name(), 20, 20);
     }
 
     public void createPoint(Point point) {
@@ -74,13 +83,18 @@ public class Table extends JPanel {
         System.out.println(mode);
     }
 
-    public void selectObjectAt(Point point) {
+    public void selectObjectAt(Point point, boolean addToSelection) {
         Selectable elected = electObjectAt(point);
         if (elected != null) {
-            if (!selected.contains(elected)) {
-                selected.add(elected);
+            if (addToSelection) {
+                if (!selected.contains(elected)) {
+                    selected.add(elected);
+                } else {
+                    selected.remove(elected);
+                }
             } else {
-                selected.remove(elected);
+                selected.clear();
+                selected.add(elected);
             }
         }
     }
@@ -106,5 +120,31 @@ public class Table extends JPanel {
             }
         }
         return eligibles;
+    }
+
+    public void initSelectRectangle(Point point) {
+        // TODO
+    }
+
+    public void initSegmentTrace(Point point) {
+        // TODO
+    }
+
+    public boolean segmentTracing() {
+        // TODO
+        return false;
+    }
+
+    public void endSegment() {
+        // TODO
+    }
+
+    public boolean selectRectangleInited() {
+        // TODO
+        return false;
+    }
+
+    public void endSelectRectangle() {
+        // TODO
     }
 }

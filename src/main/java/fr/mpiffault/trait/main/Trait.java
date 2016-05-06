@@ -35,5 +35,7 @@ public class Trait {
         frame.setContentPane(table);
         frame.setSize(WIDTH + 1, HEIGHT + 38);
         frame.setVisible(true);
+
+        System.out.println("---\n<space> for SELECTION (default)\n'p' for POINT\n's' for SEGMENT\n'c' for CONSTRUCTION");
     }
 }

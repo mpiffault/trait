@@ -16,5 +16,6 @@ public class KeyboardHandler extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
         this.table.setCurrentMode(Mode.fromEvent(e.getKeyCode()));
+        this.table.repaint();
     }
 }
