@@ -13,9 +13,23 @@ public class KeyboardHandler extends KeyAdapter {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-        super.keyPressed(e);
-        this.table.setCurrentMode(Mode.fromEvent(e.getKeyCode()));
+    public void keyPressed(KeyEvent keyEvent) {
+        super.keyPressed(keyEvent);
+        boolean actionCanceled = false;
+        if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            actionCanceled = cancelActionIfNeeded();
+        }
+        if (!actionCanceled) {
+            this.table.setCurrentMode(Mode.fromEventAndMode(keyEvent.getKeyCode(), table.getCurrentMode()));
+        }
         this.table.repaint();
+    }
+
+    private boolean cancelActionIfNeeded() {
+        if (table.ongoingAction()) {
+            table.cancelCurrentAction();
+            return true;
+        }
+        return false;
     }
 }

@@ -16,39 +16,86 @@ public class MouseHandler extends MouseInputAdapter{
     public void mouseClicked(MouseEvent e) {
 
         super.mouseClicked(e);
-        Point point = new Point(e.getX(), e.getY());
-        switch (table.getCurrentMode()) {
-            case SELECTION:
-                boolean shiftDown = e.getModifiersEx() == MouseEvent.SHIFT_DOWN_MASK;
-                table.selectObjectAt(point, shiftDown);
-                break;
-            case POINT:
-                table.createPoint(point);
-                break;
-            case SEGMENT:
-                break;
-            case CONSTRUCTION:
-                break;
-            default:
-                break;
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            leftClickActions(e);
+        } else if (e.getButton() == MouseEvent.BUTTON2) {
+            rightClickActions(e);
         }
 
         table.repaint();
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
+    private void rightClickActions(MouseEvent e) {
+        switch (table.getCurrentMode()) {
+            case SEGMENT:
+                if (table.ongoingAction()) {
+                    table.cancelCurrentAction();
+                }
+            default:
+                break;
+        }
+    }
+
+    private void leftClickActions(MouseEvent e) {
+        Point point = new Point(e.getX(), e.getY());
         switch (table.getCurrentMode()) {
             case SELECTION:
+                table.selectObjectAt(point, e.isShiftDown());
                 break;
             case POINT:
+                table.createPoint(point);
                 break;
             case SEGMENT:
+                if (!table.ongoingSegment()) {
+                    table.initSegmentTrace(point);
+                } else {
+                    table.endSegment();
+                }
                 break;
-            case CONSTRUCTION:
+            case CONSTRUCTION_H:
+                break;
+            case CONSTRUCTION_V:
+                break;
+            case CONSTRUCTION_A:
                 break;
             default:
                 break;
+        }
+    }
+
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        Point point = new Point(e.getX(), e.getY());
+        boolean mod = false;
+        switch (table.getCurrentMode()) {
+            case SELECTION:
+                if (table.ongoingSelectionBox()) {
+                    table.updateSelectionRectangle(point);
+                    mod = true;
+                }
+                break;
+            default:
+                break;
+        }
+        if (mod) {
+            table.repaint();
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        Point point = new Point(e.getX(), e.getY());
+        boolean mod = false;
+        switch (table.getCurrentMode()) {
+            case SEGMENT:
+                if (table.ongoingSegment()) {
+                    table.updateTracingSegment(point);
+                    mod = true;
+                }
+        }
+        if (mod) {
+            table.repaint();
         }
     }
 
@@ -57,10 +104,7 @@ public class MouseHandler extends MouseInputAdapter{
         Point point = new Point(e.getX(), e.getY());
         switch (table.getCurrentMode()) {
             case SELECTION:
-                table.initSelectRectangle(point);
-                break;
-            case SEGMENT:
-                table.initSegmentTrace(point);
+                table.initSelectionRectangle(point);
                 break;
             default:
                 break;
@@ -69,19 +113,21 @@ public class MouseHandler extends MouseInputAdapter{
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        boolean mod = false;
         switch (table.getCurrentMode()) {
             case SELECTION:
-                if (table.selectRectangleInited()) {
-                    table.endSelectRectangle();
+                if (table.ongoingSelectionBox()) {
+                    table.endSelectionBox();
+                    mod = true;
                 }
                 break;
             case SEGMENT:
-                if (table.segmentTracing()) {
-                    table.endSegment();
-                }
                 break;
             default:
                 break;
+        }
+        if (mod) {
+            table.repaint();
         }
     }
 }

@@ -1,5 +1,7 @@
 package fr.mpiffault.trait.dessin;
 
+import fr.mpiffault.trait.dessin.action.SelectionRectangle;
+import fr.mpiffault.trait.dessin.action.TracingSegment;
 import fr.mpiffault.trait.geometry.Point;
 import fr.mpiffault.trait.geometry.Segment;
 import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
@@ -25,6 +27,8 @@ public class Table extends JPanel {
     private final ArrayList<LinkedList<Drawable>> layers = new ArrayList<>();
 
     private final ArrayList<Selectable> selected = new ArrayList<>();
+    private SelectionRectangle selectionBox;
+    private TracingSegment tracingSegment;
 
     public Table(int width, int height) {
         this.width = width;
@@ -57,11 +61,17 @@ public class Table extends JPanel {
                 }
             }
         }
+        if (this.selectionBox != null) {
+            this.selectionBox.draw(g2);
+        }
+        if (this.tracingSegment != null) {
+            this.tracingSegment.draw(g2);
+        }
     }
 
     private void paintModeLabel(Graphics2D g2) {
         g2.setColor(Color.RED);
-        g2.drawString(currentMode.name(), 20, 20);
+        g2.drawString(currentMode.getName(), 20, 20);
     }
 
     public void createPoint(Point point) {
@@ -69,23 +79,17 @@ public class Table extends JPanel {
         this.repaint();
     }
 
-    public void prototypeSegment(Point from, int toX, int toY) {
-        layers.get(PROTO_LAYER).clear();
-        layers.get(PROTO_LAYER).add(new Segment(from, new Point(toX, toY)));
-    }
-
-    public void createLine(int x, int y) {
-
-    }
-
     public void setCurrentMode(Mode mode) {
         this.currentMode = mode;
-        System.out.println(mode);
     }
 
     public void selectObjectAt(Point point, boolean addToSelection) {
         Selectable elected = electObjectAt(point);
-        if (elected != null) {
+        if (elected == null) {
+            if (!addToSelection) {
+                selected.clear();
+            }
+        } else {
             if (addToSelection) {
                 if (!selected.contains(elected)) {
                     selected.add(elected);
@@ -122,29 +126,50 @@ public class Table extends JPanel {
         return eligibles;
     }
 
-    public void initSelectRectangle(Point point) {
-        // TODO
+    public void initSelectionRectangle(Point point) {
+        this.selectionBox = new SelectionRectangle(point);
     }
 
     public void initSegmentTrace(Point point) {
-        // TODO
+        this.tracingSegment = new TracingSegment(point);
     }
 
-    public boolean segmentTracing() {
-        // TODO
-        return false;
+    public boolean ongoingSegment() {
+        return this.tracingSegment != null;
     }
 
     public void endSegment() {
-        // TODO
+        Segment newSegment = this.tracingSegment;
+        this.layers.get(MAIN_LAYER).add(newSegment);
+        this.tracingSegment = null;
     }
 
-    public boolean selectRectangleInited() {
-        // TODO
-        return false;
+    public boolean ongoingSelectionBox() {
+        return this.selectionBox != null;
     }
 
-    public void endSelectRectangle() {
-        // TODO
+    public void endSelectionBox() {
+        this.selectionBox = null;
+    }
+
+    public void updateSelectionRectangle(Point point) {
+        if (ongoingSelectionBox()) {
+            this.selectionBox.setEndPoint(point);
+        }
+    }
+
+    public void updateTracingSegment(Point point) {
+        if (ongoingSegment()) {
+            this.tracingSegment.setEndPoint(point);
+        }
+    }
+
+    public boolean ongoingAction() {
+        return ongoingSegment() || ongoingSelectionBox();
+    }
+
+    public void cancelCurrentAction() {
+        this.tracingSegment = null;
+        this.selectionBox = null;
     }
 }

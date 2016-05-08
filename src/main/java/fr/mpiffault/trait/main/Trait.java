@@ -26,6 +26,7 @@ public class Trait {
 
         MouseHandler mouseHandler = new MouseHandler(table);
         table.addMouseListener(mouseHandler);
+        table.addMouseMotionListener(mouseHandler);
 
         table.setFocusable(true);
         KeyboardHandler keyboardHandler = new KeyboardHandler(table);
