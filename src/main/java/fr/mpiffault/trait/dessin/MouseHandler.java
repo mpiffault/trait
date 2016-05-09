@@ -70,10 +70,11 @@ public class MouseHandler extends MouseInputAdapter{
         boolean mod = false;
         switch (table.getCurrentMode()) {
             case SELECTION:
-                if (table.ongoingSelectionBox()) {
-                    table.updateSelectionRectangle(point);
-                    mod = true;
+                if (!table.ongoingSelectionBox()) {
+                    table.initSelectionBox(point);
                 }
+                table.updateSelectionRectangle(point);
+                mod = true;
                 break;
             default:
                 break;
@@ -101,11 +102,7 @@ public class MouseHandler extends MouseInputAdapter{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        Point point = new Point(e.getX(), e.getY());
         switch (table.getCurrentMode()) {
-            case SELECTION:
-                table.initSelectionRectangle(point);
-                break;
             default:
                 break;
         }
@@ -114,10 +111,11 @@ public class MouseHandler extends MouseInputAdapter{
     @Override
     public void mouseReleased(MouseEvent e) {
         boolean mod = false;
+        Point point = new Point(e.getX(), e.getY());
         switch (table.getCurrentMode()) {
             case SELECTION:
                 if (table.ongoingSelectionBox()) {
-                    table.endSelectionBox();
+                    table.endSelectionBox(point, e.isShiftDown());
                     mod = true;
                 }
                 break;

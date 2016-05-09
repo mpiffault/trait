@@ -1,6 +1,6 @@
 package fr.mpiffault.trait.dessin;
 
-import fr.mpiffault.trait.dessin.action.SelectionRectangle;
+import fr.mpiffault.trait.dessin.action.SelectionBox;
 import fr.mpiffault.trait.dessin.action.TracingSegment;
 import fr.mpiffault.trait.geometry.Point;
 import fr.mpiffault.trait.geometry.Segment;
@@ -9,8 +9,8 @@ import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.awt.geom.Rectangle2D;
+import java.util.*;
 import java.util.List;
 
 public class Table extends JPanel {
@@ -26,8 +26,9 @@ public class Table extends JPanel {
 
     private final ArrayList<LinkedList<Drawable>> layers = new ArrayList<>();
 
-    private final ArrayList<Selectable> selected = new ArrayList<>();
-    private SelectionRectangle selectionBox;
+    //private final ArrayList<Selectable> selected = new ArrayList<>();
+    private final Set<Selectable> selected = new LinkedHashSet<>();
+    private SelectionBox selectionBox;
     private TracingSegment tracingSegment;
 
     public Table(int width, int height) {
@@ -126,8 +127,8 @@ public class Table extends JPanel {
         return eligibles;
     }
 
-    public void initSelectionRectangle(Point point) {
-        this.selectionBox = new SelectionRectangle(point);
+    public void initSelectionBox(Point point) {
+        this.selectionBox = new SelectionBox(point);
     }
 
     public void initSegmentTrace(Point point) {
@@ -148,7 +149,24 @@ public class Table extends JPanel {
         return this.selectionBox != null;
     }
 
-    public void endSelectionBox() {
+    public void endSelectionBox(Point point, boolean addToSelection) {
+
+        Rectangle2D finalSelectionBox = this.selectionBox.getRectangle2D();
+
+        if (!addToSelection) {
+            this.selected.clear();
+        }
+        for (LinkedList<Drawable> layer : layers) {
+            for (Drawable drawable : layer){
+                if (drawable instanceof Selectable) {
+                    if (((Selectable)drawable).isInBox(finalSelectionBox)) {
+                        this.selected.add((Selectable)drawable);
+                    }
+                }
+            }
+        }
+
+
         this.selectionBox = null;
     }
 

@@ -6,14 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
-public class SelectionRectangle implements Drawable{
+public class SelectionBox implements Drawable{
     private Point startPoint;
     @Getter
     @Setter
     private Point endPoint;
 
-    public SelectionRectangle(Point startPoint) {
+    public SelectionBox(Point startPoint) {
         this.startPoint = startPoint;
     }
 
@@ -22,5 +23,14 @@ public class SelectionRectangle implements Drawable{
         g2.setColor(Color.BLACK);
         g2.drawRect((int)startPoint.getX(), (int)startPoint.getY(),
                 (int)(endPoint.getX() - startPoint.getX()), (int)(endPoint.getY() - startPoint.getY()));
+    }
+
+    public Rectangle2D getRectangle2D() {
+        double x = Math.min(startPoint.getX(), endPoint.getX());
+        double y = Math.min(startPoint.getY(), endPoint.getY());
+        double width = Math.abs(startPoint.getX() - endPoint.getX());
+        double height = Math.abs(startPoint.getY() - endPoint.getY());
+
+        return new Rectangle2D.Double(x, y, width, height);
     }
 }

@@ -5,6 +5,7 @@ import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 public class Segment extends Line2D.Double implements Drawable, Selectable {
 
@@ -28,6 +29,11 @@ public class Segment extends Line2D.Double implements Drawable, Selectable {
         g2.draw(this);
         new Point(super.getP1()).draw(g2);
         new Point(super.getP2()).draw(g2);
+    }
+
+    @Override
+    public boolean isInBox(Rectangle2D finalSelectionBox) {
+        return finalSelectionBox.contains(this.getBounds2D());
     }
 
     @Override

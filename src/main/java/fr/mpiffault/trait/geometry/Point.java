@@ -39,6 +39,12 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
         this.drawPoint(g2);
     }
 
+    @Override
+    public boolean isInBox(Rectangle2D finalSelectionBox) {
+        System.out.println("isInBox");
+        return finalSelectionBox.contains(this);
+    }
+
     private void drawPoint(Graphics2D g2) {
         Rectangle2D.Double gPoint = new Rectangle2D.Double(this.x - halfSize, this.y - halfSize, size, size);
         g2.draw(gPoint);
