@@ -1,6 +1,7 @@
 package fr.mpiffault.trait.geometry;
 
 import fr.mpiffault.trait.dessin.Selectable;
+import fr.mpiffault.trait.dessin.Table;
 import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
 import lombok.Getter;
 
@@ -13,7 +14,6 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
     @Getter
     private double x, y;
 
-    private Color color = Color.BLACK;
     private double size = 4.0;
     private double halfSize = 2.0;
 
@@ -29,13 +29,13 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.setColor(this.color);
+        g2.setColor(Table.FOREGROUND);
         this.drawPoint(g2);
     }
 
     @Override
     public void drawSelected(Graphics2D g2) {
-        g2.setColor(Color.MAGENTA);
+        g2.setColor(Table.SELECTED);
         this.drawPoint(g2);
     }
 

@@ -16,7 +16,12 @@ import java.util.List;
 
 public class Table extends JPanel {
 
-    public static final int MAIN_LAYER = 0;
+    private static final int MAIN_LAYER = 0;
+
+    public static final Color BACKGROUND = Color.DARK_GRAY;
+    public static final Color FOREGROUND = Color.WHITE;
+    public static final Color SELECTED = Color.MAGENTA;
+    public static final Color UI_TEXT = Color.RED;
 
     @Getter
     private int width, height;
@@ -36,6 +41,7 @@ public class Table extends JPanel {
     public Table(int width, int height) {
         this.width = width;
         this.height = height;
+        this.setBackground(BACKGROUND);
 
         this.currentMode = Mode.SELECTION;
 
@@ -54,7 +60,7 @@ public class Table extends JPanel {
     }
 
     private void paintCursor(Graphics2D g2) {
-        g2.setColor(Color.BLACK);
+        g2.setColor(FOREGROUND);
         g2.drawLine(0, (int)cursorPosition.getY(), this.getWidth(), (int)cursorPosition.getY());
         g2.drawLine((int)cursorPosition.getX(), 0, (int)cursorPosition.getX(), this.getHeight());
 
@@ -79,7 +85,7 @@ public class Table extends JPanel {
     }
 
     private void paintModeLabel(Graphics2D g2) {
-        g2.setColor(Color.RED);
+        g2.setColor(UI_TEXT);
         g2.drawString(currentMode.getName(), 20, 20);
     }
 
