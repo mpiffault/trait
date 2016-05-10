@@ -52,6 +52,13 @@ public class MouseHandler extends MouseInputAdapter{
                     table.endSegment();
                 }
                 break;
+            case CONSTRUCTION:
+                if (!table.ongoingLine()) {
+                    table.initLineTrace(point);
+                } else {
+                    table.endLine(point);
+                }
+                break;
             case CONSTRUCTION_H:
                 break;
             case CONSTRUCTION_V:

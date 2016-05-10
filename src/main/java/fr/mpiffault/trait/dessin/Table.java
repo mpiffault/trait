@@ -2,6 +2,7 @@ package fr.mpiffault.trait.dessin;
 
 import fr.mpiffault.trait.dessin.action.SelectionBox;
 import fr.mpiffault.trait.dessin.action.TracingSegment;
+import fr.mpiffault.trait.geometry.ConstructionLine;
 import fr.mpiffault.trait.geometry.Point;
 import fr.mpiffault.trait.geometry.Segment;
 import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
@@ -38,6 +39,7 @@ public class Table extends JPanel {
 
     private SelectionBox selectionBox;
     private TracingSegment tracingSegment;
+    private ConstructionLine constructionLine;
 
     public Table(int width, int height) {
         this.width = width;
@@ -211,5 +213,21 @@ public class Table extends JPanel {
             this.layers.get(MAIN_LAYER).removeAll(selected);
             this.selected.clear();
         }
+    }
+
+    public boolean ongoingLine() {
+        return this.constructionLine != null;
+    }
+
+    public void initLineTrace(Point point) {
+        constructionLine = new ConstructionLine(point, point, this);
+    }
+
+    public void endLine(Point point) {
+        if (constructionLine != null) {
+            constructionLine = new ConstructionLine(constructionLine.getFirstPoint(), point, this);
+        }
+        this.layers.get(MAIN_LAYER).add(constructionLine);
+        constructionLine = null;
     }
 }
