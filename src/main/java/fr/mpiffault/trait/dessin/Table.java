@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Table extends JPanel {
 
@@ -121,6 +122,7 @@ public class Table extends JPanel {
     private Selectable electObjectAt(Point point) {
         List<Selectable> selectables = getEligibleObjectsAt(point);
         for (Selectable selectable : selectables) {
+            // TODO : roll between selectables
             return selectable;
         }
         return null;
@@ -129,14 +131,11 @@ public class Table extends JPanel {
     private List<Selectable> getEligibleObjectsAt(Point point) {
         ArrayList<Selectable> eligibles = new ArrayList<Selectable>();
         for (LinkedList<Drawable> layer : layers) {
-            for (Drawable drawable : layer) {
-                if (drawable instanceof Selectable) {
-                    if (((Selectable)drawable).isSelectable(point)) {
-                        eligibles.add((Selectable)drawable);
-                    }
-
-                }
-            }
+            eligibles.addAll(layer.stream()
+                    .filter(drawable -> drawable instanceof Selectable)
+                    .filter(drawable -> ((Selectable) drawable).isSelectable(point))
+                    .map(drawable -> (Selectable) drawable)
+                    .collect(Collectors.toList()));
         }
         return eligibles;
     }
@@ -171,13 +170,11 @@ public class Table extends JPanel {
             this.selected.clear();
         }
         for (LinkedList<Drawable> layer : layers) {
-            for (Drawable drawable : layer){
-                if (drawable instanceof Selectable) {
-                    if (((Selectable)drawable).isInBox(finalSelectionBox)) {
-                        this.selected.add((Selectable)drawable);
-                    }
-                }
-            }
+            this.selected.addAll(layer.stream()
+                    .filter(drawable -> drawable instanceof Selectable)
+                    .filter(drawable -> ((Selectable) drawable).isInBox(finalSelectionBox))
+                    .map(drawable -> (Selectable) drawable)
+                    .collect(Collectors.toList()));
         }
 
 
