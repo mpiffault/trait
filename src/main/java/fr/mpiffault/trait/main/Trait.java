@@ -5,6 +5,8 @@ import fr.mpiffault.trait.dessin.MouseHandler;
 import fr.mpiffault.trait.dessin.Table;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 
 public class Trait {
@@ -31,6 +33,13 @@ public class Trait {
         table.setFocusable(true);
         KeyboardHandler keyboardHandler = new KeyboardHandler(table);
         table.addKeyListener(keyboardHandler);
+
+        // table.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        Image cursorImage = new BufferedImage(1,1,BufferedImage.TYPE_3BYTE_BGR);
+        ((BufferedImage)cursorImage).setRGB(0,0,0x000000);
+        Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(0,0), "pointCursor");
+
+        table.setCursor(cursor);
 
         frame.add(table);
         frame.setContentPane(table);

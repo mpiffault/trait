@@ -6,6 +6,7 @@ import fr.mpiffault.trait.geometry.Point;
 import fr.mpiffault.trait.geometry.Segment;
 import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +17,6 @@ import java.util.List;
 public class Table extends JPanel {
 
     public static final int MAIN_LAYER = 0;
-    public static final int PROTO_LAYER = 1;
 
     @Getter
     private int width, height;
@@ -24,10 +24,12 @@ public class Table extends JPanel {
     @Getter
     private Mode currentMode;
 
-    private final ArrayList<LinkedList<Drawable>> layers = new ArrayList<>();
+    @Setter
+    private Point cursorPosition = new Point(0D,0D);
 
-    //private final ArrayList<Selectable> selected = new ArrayList<>();
+    private final ArrayList<LinkedList<Drawable>> layers = new ArrayList<>();
     private final Set<Selectable> selected = new LinkedHashSet<>();
+
     private SelectionBox selectionBox;
     private TracingSegment tracingSegment;
 
@@ -38,9 +40,7 @@ public class Table extends JPanel {
         this.currentMode = Mode.SELECTION;
 
         LinkedList<Drawable> mainLayer = new LinkedList<>();
-        LinkedList<Drawable> prototypeLayer = new LinkedList<>();
         layers.add(mainLayer);
-        layers.add(prototypeLayer);
     }
 
     @Override
@@ -50,6 +50,14 @@ public class Table extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintDrawables(g2);
         paintModeLabel(g2);
+        paintCursor(g2);
+    }
+
+    private void paintCursor(Graphics2D g2) {
+        g2.setColor(Color.BLACK);
+        g2.drawLine(0, (int)cursorPosition.getY(), this.getWidth(), (int)cursorPosition.getY());
+        g2.drawLine((int)cursorPosition.getX(), 0, (int)cursorPosition.getX(), this.getHeight());
+
     }
 
     private void paintDrawables(Graphics2D g2) {
@@ -189,5 +197,16 @@ public class Table extends JPanel {
     public void cancelCurrentAction() {
         this.tracingSegment = null;
         this.selectionBox = null;
+    }
+
+    public void drawCursor(Point point) {
+
+    }
+
+    public void deleteSelectedObjects() {
+        if (!this.selected.isEmpty()) {
+            this.layers.get(MAIN_LAYER).removeAll(selected);
+            this.selected.clear();
+        }
     }
 }

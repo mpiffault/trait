@@ -19,6 +19,16 @@ public class KeyboardHandler extends KeyAdapter {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
             actionCanceled = cancelActionIfNeeded();
         }
+        switch (keyEvent.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE:
+                actionCanceled = cancelActionIfNeeded();
+                break;
+            case KeyEvent.VK_DELETE:
+                this.table.deleteSelectedObjects();
+                break;
+            default:
+                break;
+        }
         if (!actionCanceled) {
             this.table.setCurrentMode(Mode.fromEventAndMode(keyEvent.getKeyCode(), table.getCurrentMode()));
         }

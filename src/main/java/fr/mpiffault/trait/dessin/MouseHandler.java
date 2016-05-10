@@ -67,37 +67,31 @@ public class MouseHandler extends MouseInputAdapter{
     @Override
     public void mouseDragged(MouseEvent e) {
         Point point = new Point(e.getX(), e.getY());
-        boolean mod = false;
+        table.setCursorPosition(point);
         switch (table.getCurrentMode()) {
             case SELECTION:
                 if (!table.ongoingSelectionBox()) {
                     table.initSelectionBox(point);
                 }
                 table.updateSelectionRectangle(point);
-                mod = true;
                 break;
             default:
                 break;
         }
-        if (mod) {
-            table.repaint();
-        }
+        table.repaint();
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         Point point = new Point(e.getX(), e.getY());
-        boolean mod = false;
+        table.setCursorPosition(point);
         switch (table.getCurrentMode()) {
             case SEGMENT:
                 if (table.ongoingSegment()) {
                     table.updateTracingSegment(point);
-                    mod = true;
                 }
         }
-        if (mod) {
-            table.repaint();
-        }
+        table.repaint();
     }
 
     @Override
