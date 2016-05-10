@@ -33,8 +33,8 @@ public class ConstructionLine implements Drawable{
     @Override
     public void draw(Graphics2D g2) {
         g2.setColor(Table.FOREGROUND);
-        final float dash[] = {10.0f};
-        BasicStroke basicStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+        final float dash[] = {7.0f};
+        BasicStroke basicStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
         g2.setStroke(basicStroke);
         double xa = 0D;
         double ya = coefficient * xa + shift;
