@@ -41,13 +41,20 @@ public class ConstructionLine implements Drawable{
         double xb = table.getWidth();
         double yb = coefficient * xb + shift;
 
-        if (ya < 0D) {
-            ya = 0D;
-            xa = (ya - shift) / coefficient;
-        }
-        if (yb < 0D) {
-            yb = 0D;
-            xb = (yb - shift) / coefficient;
+        if (!vertical) {
+            if (ya < 0D) {
+                ya = 0D;
+                xa = (ya - shift) / coefficient;
+            }
+            if (yb < 0D) {
+                yb = 0D;
+                xb = (yb - shift) / coefficient;
+            }
+        } else {
+            xa = coefficient;
+            ya = 0;
+            xb = coefficient;
+            yb = table.getWidth();
         }
 
         Point pa = new Point(xa, ya);

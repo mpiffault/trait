@@ -230,4 +230,28 @@ public class Table extends JPanel {
         this.layers.get(MAIN_LAYER).add(constructionLine);
         constructionLine = null;
     }
+
+    public void traceHorizontalLine(Point point) {
+        constructionLine = new ConstructionLine(point, new Point(point.getX() + 1, point.getY()), this);
+        this.layers.get(MAIN_LAYER).add(constructionLine);
+        constructionLine = null;
+    }
+
+    public void endHorizontalLine(Point point) {
+        traceHorizontalLine(constructionLine.getFirstPoint());
+    }
+
+    public void traceVerticalLine(Point point) {
+        constructionLine = new ConstructionLine(point, new Point(point.getX(), point.getY() + 1), this);
+        this.layers.get(MAIN_LAYER).add(constructionLine);
+        constructionLine = null;
+    }
+
+    public void endVerticalLine(Point point) {
+        traceVerticalLine(constructionLine.getFirstPoint());
+    }
+
+    public void traceAngleLine(Point point) {
+        // TODO
+    }
 }
