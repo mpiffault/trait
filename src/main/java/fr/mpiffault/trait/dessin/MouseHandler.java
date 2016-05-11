@@ -94,7 +94,7 @@ public class MouseHandler extends MouseInputAdapter{
                 if (!table.ongoingSelectionBox()) {
                     table.initSelectionBox(point);
                 }
-                table.updateSelectionRectangle(point);
+                table.updateSelectionBox(point);
                 break;
             default:
                 break;

@@ -165,6 +165,7 @@ public class Table extends JPanel {
     }
 
     public void endSelectionBox(Point point, boolean addToSelection) {
+        updateSelectionBox(point);
 
         Rectangle2D finalSelectionBox = this.selectionBox.getRectangle2D();
 
@@ -183,7 +184,7 @@ public class Table extends JPanel {
         this.selectionBox = null;
     }
 
-    public void updateSelectionRectangle(Point point) {
+    public void updateSelectionBox(Point point) {
         if (ongoingSelectionBox()) {
             this.selectionBox.setEndPoint(point);
         }
@@ -202,10 +203,6 @@ public class Table extends JPanel {
     public void cancelCurrentAction() {
         this.tracingSegment = null;
         this.selectionBox = null;
-    }
-
-    public void drawCursor(Point point) {
-
     }
 
     public void deleteSelectedObjects() {
