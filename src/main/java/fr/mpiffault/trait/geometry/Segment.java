@@ -32,12 +32,16 @@ public class Segment extends Line2D.Double implements Drawable, Selectable {
 
     @Override
     public boolean isInBox(Rectangle2D finalSelectionBox) {
-        return finalSelectionBox.contains(this.getBounds2D());
+        return finalSelectionBox.getX() <= this.getBounds2D().getX()
+                && (finalSelectionBox.getX() + finalSelectionBox.getWidth()) >= (this.getBounds2D().getX() + this.getBounds2D().getWidth())
+                && finalSelectionBox.getY() <= this.getBounds2D().getY()
+                && (finalSelectionBox.getY() + finalSelectionBox.getHeight()) >= (this.getBounds2D().getY() + this.getBounds2D().getHeight());
     }
 
     @Override
     public boolean isSelectable(Point point) {
-        return this.ptLineDist(point) < 3.0D;
+        return this.ptSegDist(point) < 3.0D;
+
     }
 
     public void setEndPoint(Point endPoint) {
