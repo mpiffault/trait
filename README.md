@@ -16,6 +16,7 @@ Droites de construction
 Échelle
 
   * coordonnées modèle en précision maximales, affichage arrondi selon paramètre
+  * Système de zoom + affichage de l'échelle
 
 Tracés
 

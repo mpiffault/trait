@@ -1,0 +1,13 @@
+# Find nearest intersection :
+Timed search : each second or so if the mouse is moving
+
+    - filter nearest lines into a set
+    - calculate each intersections in the set
+    - order by distance to the mouse pointer
+
+# Find nearest line to trace parallels
+Timed search : each second or so if the mouse is moving
+
+    - filter nearest lines into an ordered list by distance to mouse pointer
+
+# Find and represent side where parallel has to be draw
