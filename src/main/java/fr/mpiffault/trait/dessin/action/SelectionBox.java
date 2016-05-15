@@ -26,6 +26,11 @@ public class SelectionBox implements Drawable{
                 (int)(endPoint.getX() - startPoint.getX()), (int)(endPoint.getY() - startPoint.getY()));
     }
 
+    @Override
+    public void drawHightlighted(Graphics2D g2) {
+
+    }
+
     public Rectangle2D getRectangle2D() {
         double x = Math.min(startPoint.getX(), endPoint.getX());
         double y = Math.min(startPoint.getY(), endPoint.getY());

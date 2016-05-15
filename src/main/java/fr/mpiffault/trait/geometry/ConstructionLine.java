@@ -65,4 +65,13 @@ public class ConstructionLine implements Drawable{
         g2.draw(line);
         g2.setStroke(new BasicStroke());
     }
+
+    @Override
+    public void drawHightlighted(Graphics2D g2) {
+
+    }
+
+    protected Point getMiddle() {
+        return new Point(this.secondPoint.getX() - this.firstPoint.getX(), this.secondPoint.getY() - this.firstPoint.getY());
+    }
 }

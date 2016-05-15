@@ -12,8 +12,11 @@ public class MouseHandler extends MouseInputAdapter{
         this.table = table;
     }
 
+    private long previousTime = System.currentTimeMillis();
+
     @Override
     public void mouseClicked(MouseEvent e) {
+
 
         super.mouseClicked(e);
         if (e.getButton() == MouseEvent.BUTTON1) {
@@ -106,10 +109,19 @@ public class MouseHandler extends MouseInputAdapter{
     public void mouseMoved(MouseEvent e) {
         Point point = new Point(e.getX(), e.getY());
         table.setCursorPosition(point);
+
+        long currentTime = System.currentTimeMillis();
+        long deltaTime = currentTime - previousTime;
+        if (deltaTime > 50D) {
+            // System.out.println("currTime:" + currentTime + "prevTime:" + previousTime + " dTime:" + deltaTime);
+            previousTime = currentTime;
+            table.updateNearestSegments();
+        }
+
         switch (table.getCurrentMode()) {
             case SEGMENT:
                 if (table.ongoingSegment()) {
-                    table.updateTracingSegment(point);
+                    table.updateTracingSegment();
                 }
         }
         table.repaint();

@@ -18,16 +18,29 @@ public class Segment extends Line2D.Double implements Drawable, Selectable {
     public void draw(Graphics2D g2) {
         g2.setColor(Table.FOREGROUND);
         g2.draw(this);
-        new Point(super.getP1()).draw(g2);
-        new Point(super.getP2()).draw(g2);
     }
 
     @Override
     public void drawSelected(Graphics2D g2) {
         g2.setColor(Table.SELECTED);
         g2.draw(this);
-        new Point(super.getP1()).draw(g2);
-        new Point(super.getP2()).draw(g2);
+    }
+
+    public void drawNearest(Graphics2D g2) {
+        BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
+        g2.setStroke(basicStroke);
+        g2.setColor(Table.NEAREST);
+        g2.draw(this);
+        g2.setStroke(new BasicStroke());
+    }
+
+    @Override
+    public void drawHightlighted(Graphics2D g2) {
+        BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
+        g2.setStroke(basicStroke);
+        g2.setColor(Table.HIGHTLIGHTED);
+        g2.draw(this);
+        g2.setStroke(new BasicStroke());
     }
 
     @Override
@@ -47,5 +60,34 @@ public class Segment extends Line2D.Double implements Drawable, Selectable {
     public void setEndPoint(Point endPoint) {
         super.x2 = endPoint.getX();
         super.y2 = endPoint.getY();
+    }
+
+    protected Point getMiddle() {
+        return new Point(this.x2 - this.x1, this.y2 - this.y1);
+    }
+
+    public Point getIntersection(Segment other) {
+
+        Point thisMiddlePoint = this.getMiddle();
+        Point otherMiddlePoint = other.getMiddle();
+
+        Point intersectionPoint = null;
+
+        double otherCoeff, thisCoeff;
+        thisCoeff = ( otherMiddlePoint.getX() * (this.y1 - other.y1) - otherMiddlePoint.getY() * (this.x1 - other.x1))
+                / (-otherMiddlePoint.getX() * thisMiddlePoint.getY() + thisMiddlePoint.getX() * otherMiddlePoint.getY());
+        otherCoeff = (-thisMiddlePoint.getY() * (this.x1 - other.x1) + thisMiddlePoint.getX() * (this.y1 - other.y1))
+                / (-otherMiddlePoint.getX() * thisMiddlePoint.getY() + thisMiddlePoint.getX() * otherMiddlePoint.getY());
+
+        if (otherCoeff >= 0 && otherCoeff <= 1 && thisCoeff >= 0 && thisCoeff <= 1)
+        {
+            intersectionPoint = new Point(this.x1 + (thisCoeff * thisMiddlePoint.getX()), this.y1 + (thisCoeff * thisMiddlePoint.getY()));
+        }
+
+        return intersectionPoint;
+    }
+
+    public Point getIntersection(ConstructionLine constructionLine) {
+        return null;
     }
 }

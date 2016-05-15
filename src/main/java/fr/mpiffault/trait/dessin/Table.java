@@ -23,6 +23,8 @@ public class Table extends JPanel {
     public static final Color BACKGROUND = Color.DARK_GRAY;
     public static final Color FOREGROUND = Color.WHITE;
     public static final Color SELECTED = Color.MAGENTA;
+    public static final Color HIGHTLIGHTED = Color.GREEN;
+    public static final Color NEAREST = Color.BLUE;
     public static final Color UI_TEXT = Color.RED;
 
     @Getter
@@ -40,6 +42,8 @@ public class Table extends JPanel {
     private SelectionBox selectionBox;
     private TracingSegment tracingSegment;
     private ConstructionLine constructionLine;
+    private List nearestSegments;
+    private Segment nearestSegment;
 
     public Table(int width, int height) {
         this.width = width;
@@ -50,6 +54,8 @@ public class Table extends JPanel {
 
         LinkedList<Drawable> mainLayer = new LinkedList<>();
         layers.add(mainLayer);
+
+        nearestSegments = new ArrayList<>();
     }
 
     @Override
@@ -77,7 +83,13 @@ public class Table extends JPanel {
                 } else {
                     drawable.draw(g2);
                 }
+                if (this.nearestSegments.contains(drawable)) {
+                    drawable.drawHightlighted(g2);
+                }
             }
+        }
+        if (this.nearestSegment != null) {
+            this.nearestSegment.drawNearest(g2);
         }
         if (this.selectionBox != null) {
             this.selectionBox.draw(g2);
@@ -190,9 +202,9 @@ public class Table extends JPanel {
         }
     }
 
-    public void updateTracingSegment(Point point) {
+    public void updateTracingSegment() {
         if (ongoingSegment()) {
-            this.tracingSegment.setEndPoint(point);
+            this.tracingSegment.setEndPoint(this.cursorPosition);
         }
     }
 
@@ -250,5 +262,21 @@ public class Table extends JPanel {
 
     public void traceAngleLine(Point point) {
         // TODO
+    }
+
+    public void updateNearestSegments() {
+        List<Drawable> segments = new ArrayList<>();
+        for (LinkedList<Drawable> layer : this.layers) {
+            for(Drawable drawable : layer) {
+                if (drawable instanceof Segment) {
+                    segments.add(drawable);
+                }
+            }
+            segments.sort((o1, o2) -> Double.compare(((Segment)o1).ptSegDist(cursorPosition), ((Segment)o2).ptSegDist(cursorPosition)));
+            this.nearestSegments = segments.subList(0,Math.min(segments.size(), 3));
+            if (!this.nearestSegments.isEmpty()) {
+                this.nearestSegment = (Segment) segments.get(0);
+            }
+        }
     }
 }

@@ -34,6 +34,11 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
     }
 
     @Override
+    public void drawHightlighted(Graphics2D g2) {
+
+    }
+
+    @Override
     public void drawSelected(Graphics2D g2) {
         g2.setColor(Table.SELECTED);
         this.drawPoint(g2);
