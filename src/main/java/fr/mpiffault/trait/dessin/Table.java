@@ -37,6 +37,7 @@ public class Table extends JPanel {
     private Point cursorPosition = new Point(0D,0D);
 
     private final ArrayList<LinkedList<Drawable>> layers = new ArrayList<>();
+    private LinkedList<Drawable> activeLayer;
     private final Set<Selectable> selected = new LinkedHashSet<>();
 
     private SelectionBox selectionBox;
@@ -53,6 +54,7 @@ public class Table extends JPanel {
         this.currentMode = Mode.SELECTION;
 
         LinkedList<Drawable> mainLayer = new LinkedList<>();
+        activeLayer = mainLayer;
         layers.add(mainLayer);
 
         nearestSegments = new ArrayList<>();
@@ -76,16 +78,14 @@ public class Table extends JPanel {
     }
 
     private void paintDrawables(Graphics2D g2) {
-        for (LinkedList<Drawable> layer : layers) {
-            for (Drawable drawable : layer) {
-                if (drawable instanceof Selectable && selected.contains(drawable)) {
-                    ((Selectable)drawable).drawSelected(g2);
-                } else {
-                    drawable.draw(g2);
-                }
-                if (this.nearestSegments.contains(drawable)) {
-                    drawable.drawHightlighted(g2);
-                }
+        for (Drawable drawable : activeLayer) {
+            if (drawable instanceof Selectable && selected.contains(drawable)) {
+                ((Selectable)drawable).drawSelected(g2);
+            } else {
+                drawable.draw(g2);
+            }
+            if (this.nearestSegments.contains(drawable)) {
+                drawable.drawHightlighted(g2);
             }
         }
         if (this.nearestSegment != null) {
@@ -105,7 +105,7 @@ public class Table extends JPanel {
     }
 
     public void createPoint(Point point) {
-        layers.get(MAIN_LAYER).add(point);
+        activeLayer.add(point);
         this.repaint();
     }
 
@@ -143,15 +143,11 @@ public class Table extends JPanel {
     }
 
     private List<Selectable> getEligibleObjectsAt(Point point) {
-        ArrayList<Selectable> eligibles = new ArrayList<Selectable>();
-        for (LinkedList<Drawable> layer : layers) {
-            eligibles.addAll(layer.stream()
-                    .filter(drawable -> drawable instanceof Selectable)
-                    .filter(drawable -> ((Selectable) drawable).isSelectable(point))
-                    .map(drawable -> (Selectable) drawable)
-                    .collect(Collectors.toList()));
-        }
-        return eligibles;
+        return activeLayer.stream()
+                .filter(drawable -> drawable instanceof Selectable)
+                .filter(drawable -> ((Selectable) drawable).isSelectable(point))
+                .map(drawable -> (Selectable) drawable)
+                .collect(Collectors.toList());
     }
 
     public void initSelectionBox(Point point) {
@@ -168,7 +164,7 @@ public class Table extends JPanel {
 
     public void endSegment() {
         Segment newSegment = this.tracingSegment;
-        this.layers.get(MAIN_LAYER).add(newSegment);
+        activeLayer.add(newSegment);
         this.tracingSegment = null;
     }
 
@@ -184,14 +180,11 @@ public class Table extends JPanel {
         if (!addToSelection) {
             this.selected.clear();
         }
-        for (LinkedList<Drawable> layer : layers) {
-            this.selected.addAll(layer.stream()
-                    .filter(drawable -> drawable instanceof Selectable)
-                    .filter(drawable -> ((Selectable) drawable).isInBox(finalSelectionBox))
-                    .map(drawable -> (Selectable) drawable)
-                    .collect(Collectors.toList()));
-        }
-
+        this.selected.addAll(activeLayer.stream()
+                .filter(drawable -> drawable instanceof Selectable)
+                .filter(drawable -> ((Selectable) drawable).isInBox(finalSelectionBox))
+                .map(drawable -> (Selectable) drawable)
+                .collect(Collectors.toList()));
 
         this.selectionBox = null;
     }
@@ -219,7 +212,7 @@ public class Table extends JPanel {
 
     public void deleteSelectedObjects() {
         if (!this.selected.isEmpty()) {
-            this.layers.get(MAIN_LAYER).removeAll(selected);
+            activeLayer.removeAll(selected);
             this.selected.clear();
         }
     }
@@ -236,13 +229,13 @@ public class Table extends JPanel {
         if (constructionLine != null) {
             constructionLine = new ConstructionLine(constructionLine.getFirstPoint(), point, this);
         }
-        this.layers.get(MAIN_LAYER).add(constructionLine);
+        activeLayer.add(constructionLine);
         constructionLine = null;
     }
 
     public void traceHorizontalLine(Point point) {
         constructionLine = new ConstructionLine(point, new Point(point.getX() + 1, point.getY()), this);
-        this.layers.get(MAIN_LAYER).add(constructionLine);
+        activeLayer.add(constructionLine);
         constructionLine = null;
     }
 
@@ -252,7 +245,7 @@ public class Table extends JPanel {
 
     public void traceVerticalLine(Point point) {
         constructionLine = new ConstructionLine(point, new Point(point.getX(), point.getY() + 1), this);
-        this.layers.get(MAIN_LAYER).add(constructionLine);
+        activeLayer.add(constructionLine);
         constructionLine = null;
     }
 
@@ -265,18 +258,13 @@ public class Table extends JPanel {
     }
 
     public void updateNearestSegments() {
-        List<Drawable> segments = new ArrayList<>();
-        for (LinkedList<Drawable> layer : this.layers) {
-            for(Drawable drawable : layer) {
-                if (drawable instanceof Segment) {
-                    segments.add(drawable);
-                }
-            }
-            segments.sort((o1, o2) -> Double.compare(((Segment)o1).ptSegDist(cursorPosition), ((Segment)o2).ptSegDist(cursorPosition)));
-            this.nearestSegments = segments.subList(0,Math.min(segments.size(), 3));
-            if (!this.nearestSegments.isEmpty()) {
-                this.nearestSegment = (Segment) segments.get(0);
-            }
+        List<Drawable> segments = activeLayer.stream()
+                .filter(drawable -> drawable instanceof Segment)
+                .sorted((o1, o2) -> Double.compare(((Segment) o1).ptSegDist(cursorPosition), ((Segment) o2).ptSegDist(cursorPosition)))
+                .collect(Collectors.toList());
+        this.nearestSegments = segments.subList(0,Math.min(segments.size(), 3));
+        if (!this.nearestSegments.isEmpty()) {
+            this.nearestSegment = (Segment) segments.get(0);
         }
     }
 }

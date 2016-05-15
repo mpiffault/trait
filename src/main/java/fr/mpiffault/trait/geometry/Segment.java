@@ -74,14 +74,18 @@ public class Segment extends Line2D.Double implements Drawable, Selectable {
         Point intersectionPoint = null;
 
         double otherCoeff, thisCoeff;
-        thisCoeff = ( otherMiddlePoint.getX() * (this.y1 - other.y1) - otherMiddlePoint.getY() * (this.x1 - other.x1))
-                / (-otherMiddlePoint.getX() * thisMiddlePoint.getY() + thisMiddlePoint.getX() * otherMiddlePoint.getY());
-        otherCoeff = (-thisMiddlePoint.getY() * (this.x1 - other.x1) + thisMiddlePoint.getX() * (this.y1 - other.y1))
-                / (-otherMiddlePoint.getX() * thisMiddlePoint.getY() + thisMiddlePoint.getX() * otherMiddlePoint.getY());
+        double determinant = (-otherMiddlePoint.getX() * thisMiddlePoint.getY() + thisMiddlePoint.getX() * otherMiddlePoint.getY());
 
-        if (otherCoeff >= 0 && otherCoeff <= 1 && thisCoeff >= 0 && thisCoeff <= 1)
-        {
-            intersectionPoint = new Point(this.x1 + (thisCoeff * thisMiddlePoint.getX()), this.y1 + (thisCoeff * thisMiddlePoint.getY()));
+        if (determinant != 0) {
+            thisCoeff = (otherMiddlePoint.getX() * (this.y1 - other.y1) - otherMiddlePoint.getY() * (this.x1 - other.x1))
+                    / determinant;
+            otherCoeff = (-thisMiddlePoint.getY() * (this.x1 - other.x1) + thisMiddlePoint.getX() * (this.y1 - other.y1))
+                    / determinant;
+
+            if (otherCoeff >= 0 && otherCoeff <= 1 && thisCoeff >= 0 && thisCoeff <= 1)
+            {
+                intersectionPoint = new Point(this.x1 + (thisCoeff * thisMiddlePoint.getX()), this.y1 + (thisCoeff * thisMiddlePoint.getY()));
+            }
         }
 
         return intersectionPoint;
