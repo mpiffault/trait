@@ -6,6 +6,7 @@ import javax.swing.event.MouseInputAdapter;
 import java.awt.event.MouseEvent;
 
 public class MouseHandler extends MouseInputAdapter{
+    public static final double SNAP_UPDATE_INTERVAL = 50D;
     private final Table table;
 
     public MouseHandler(Table table) {
@@ -16,7 +17,6 @@ public class MouseHandler extends MouseInputAdapter{
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
 
         super.mouseClicked(e);
         if (e.getButton() == MouseEvent.BUTTON1) {
@@ -41,46 +41,47 @@ public class MouseHandler extends MouseInputAdapter{
 
     private void leftClickActions(MouseEvent e) {
         Point point = new Point(e.getX(), e.getY());
+        table.setCursorPosition(point);
         switch (table.getCurrentMode()) {
             case SELECTION:
                 table.selectObjectAt(point, e.isShiftDown());
                 break;
             case POINT:
-                table.createPoint(point);
+                table.createPoint();
                 break;
             case SEGMENT:
                 if (!table.ongoingSegment()) {
-                    table.initSegmentTrace(point);
+                    table.initSegmentTrace();
                 } else {
                     table.endSegment();
                 }
                 break;
             case CONSTRUCTION:
-                if (!table.ongoingLine()) {
-                    table.initLineTrace(point);
+                if (!table.ongoingConstructionLine()) {
+                    table.initConstructionLineTrace();
                 } else {
-                    table.endLine(point);
+                    table.endConstructionLine();
                 }
                 break;
             case CONSTRUCTION_H:
-                if (!table.ongoingLine()) {
-                    table.traceHorizontalLine(point);
+                if (!table.ongoingConstructionLine()) {
+                    table.traceHorizontalLine();
                 } else {
-                    table.endHorizontalLine(point);
+                    table.endHorizontalLine();
                 }
                 break;
             case CONSTRUCTION_V:
-                if (!table.ongoingLine()) {
-                    table.traceVerticalLine(point);
+                if (!table.ongoingConstructionLine()) {
+                    table.traceVerticalLine();
                 } else {
-                    table.endVerticalLine(point);
+                    table.endVerticalLine();
                 }
                 break;
             case CONSTRUCTION_A:
-                if (table.ongoingLine()) {
+                if (table.ongoingConstructionLine()) {
                     table.cancelCurrentAction();
                 }
-                table.traceAngleLine(point);
+                table.traceAngleLine();
                 break;
             default:
                 break;
@@ -95,9 +96,9 @@ public class MouseHandler extends MouseInputAdapter{
         switch (table.getCurrentMode()) {
             case SELECTION:
                 if (!table.ongoingSelectionBox()) {
-                    table.initSelectionBox(point);
+                    table.initSelectionBox();
                 }
-                table.updateSelectionBox(point);
+                table.updateSelectionBox();
                 break;
             default:
                 break;
@@ -112,8 +113,7 @@ public class MouseHandler extends MouseInputAdapter{
 
         long currentTime = System.currentTimeMillis();
         long deltaTime = currentTime - previousTime;
-        if (deltaTime > 50D) {
-            // System.out.println("currTime:" + currentTime + "prevTime:" + previousTime + " dTime:" + deltaTime);
+        if (deltaTime > SNAP_UPDATE_INTERVAL) {
             previousTime = currentTime;
             table.updateNearestSegments();
         }
@@ -122,6 +122,10 @@ public class MouseHandler extends MouseInputAdapter{
             case SEGMENT:
                 if (table.ongoingSegment()) {
                     table.updateTracingSegment();
+                }
+            case CONSTRUCTION:
+                if(table.ongoingConstructionLine()) {
+                    table.updateTracingConstructionLine();
                 }
         }
         table.repaint();
@@ -139,10 +143,11 @@ public class MouseHandler extends MouseInputAdapter{
     public void mouseReleased(MouseEvent e) {
         boolean mod = false;
         Point point = new Point(e.getX(), e.getY());
+        table.setCursorPosition(point);
         switch (table.getCurrentMode()) {
             case SELECTION:
                 if (table.ongoingSelectionBox()) {
-                    table.endSelectionBox(point, e.isShiftDown());
+                    table.endSelectionBox(e.isShiftDown());
                     mod = true;
                 }
                 break;

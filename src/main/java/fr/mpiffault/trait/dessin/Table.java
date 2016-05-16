@@ -60,6 +60,8 @@ public class Table extends JPanel {
         nearestSegments = new ArrayList<>();
     }
 
+    /* DRAWING */
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -91,11 +93,14 @@ public class Table extends JPanel {
         if (this.nearestSegment != null) {
             this.nearestSegment.drawNearest(g2);
         }
-        if (this.selectionBox != null) {
+        if (this.ongoingSelectionBox()) {
             this.selectionBox.draw(g2);
         }
-        if (this.tracingSegment != null) {
+        if (this.ongoingSegment()) {
             this.tracingSegment.draw(g2);
+        }
+        if (this.ongoingConstructionLine()) {
+            this.constructionLine.draw(g2);
         }
     }
 
@@ -104,14 +109,28 @@ public class Table extends JPanel {
         g2.drawString(currentMode.getName(), 20, 20);
     }
 
-    public void createPoint(Point point) {
-        activeLayer.add(point);
-        this.repaint();
-    }
-
     public void setCurrentMode(Mode mode) {
         this.currentMode = mode;
     }
+
+    public boolean ongoingAction() {
+        return ongoingSelectionBox() || ongoingSegment() || ongoingConstructionLine();
+    }
+
+    public void cancelCurrentAction() {
+        this.selectionBox = null;
+        this.tracingSegment = null;
+        this.constructionLine = null;
+    }
+
+    public void deleteSelectedObjects() {
+        if (!this.selected.isEmpty()) {
+            activeLayer.removeAll(selected);
+            this.selected.clear();
+        }
+    }
+
+    /* SELECTION */
 
     public void selectObjectAt(Point point, boolean addToSelection) {
         Selectable elected = electObjectAt(point);
@@ -150,30 +169,22 @@ public class Table extends JPanel {
                 .collect(Collectors.toList());
     }
 
-    public void initSelectionBox(Point point) {
-        this.selectionBox = new SelectionBox(point);
-    }
-
-    public void initSegmentTrace(Point point) {
-        this.tracingSegment = new TracingSegment(point);
-    }
-
-    public boolean ongoingSegment() {
-        return this.tracingSegment != null;
-    }
-
-    public void endSegment() {
-        Segment newSegment = this.tracingSegment;
-        activeLayer.add(newSegment);
-        this.tracingSegment = null;
+    public void initSelectionBox() {
+        this.selectionBox = new SelectionBox(this.cursorPosition);
     }
 
     public boolean ongoingSelectionBox() {
         return this.selectionBox != null;
     }
 
-    public void endSelectionBox(Point point, boolean addToSelection) {
-        updateSelectionBox(point);
+    public void updateSelectionBox() {
+        if (ongoingSelectionBox()) {
+            this.selectionBox.setEndPoint(this.cursorPosition);
+        }
+    }
+
+    public void endSelectionBox(boolean addToSelection) {
+        updateSelectionBox();
 
         Rectangle2D finalSelectionBox = this.selectionBox.getRectangle2D();
 
@@ -189,10 +200,21 @@ public class Table extends JPanel {
         this.selectionBox = null;
     }
 
-    public void updateSelectionBox(Point point) {
-        if (ongoingSelectionBox()) {
-            this.selectionBox.setEndPoint(point);
-        }
+    /* POINT */
+
+    public void createPoint() {
+        activeLayer.add(this.cursorPosition);
+        this.repaint();
+    }
+
+    /* SEGMENT */
+
+    public void initSegmentTrace() {
+        this.tracingSegment = new TracingSegment(this.cursorPosition);
+    }
+
+    public boolean ongoingSegment() {
+        return this.tracingSegment != null;
     }
 
     public void updateTracingSegment() {
@@ -201,61 +223,64 @@ public class Table extends JPanel {
         }
     }
 
-    public boolean ongoingAction() {
-        return ongoingSegment() || ongoingSelectionBox();
-    }
-
-    public void cancelCurrentAction() {
+    public void endSegment() {
+        Segment newSegment = this.tracingSegment;
+        activeLayer.add(newSegment);
         this.tracingSegment = null;
-        this.selectionBox = null;
     }
 
-    public void deleteSelectedObjects() {
-        if (!this.selected.isEmpty()) {
-            activeLayer.removeAll(selected);
-            this.selected.clear();
+    /* CONSTRUCTION */
+
+    public void initConstructionLineTrace() {
+        constructionLine = new ConstructionLine(this.cursorPosition, this.cursorPosition, this);
+    }
+
+    public void updateTracingConstructionLine() {
+        if (ongoingConstructionLine()) {
+            this.constructionLine.setSecondPoint(this.cursorPosition);
         }
     }
 
-    public boolean ongoingLine() {
+    public boolean ongoingConstructionLine() {
         return this.constructionLine != null;
     }
 
-    public void initLineTrace(Point point) {
-        constructionLine = new ConstructionLine(point, point, this);
-    }
-
-    public void endLine(Point point) {
+    public void endConstructionLine() {
         if (constructionLine != null) {
-            constructionLine = new ConstructionLine(constructionLine.getFirstPoint(), point, this);
+            //constructionLine = new ConstructionLine(constructionLine.getFirstPoint(), this.cursorPosition, this);
+            constructionLine.setSecondPoint(this.cursorPosition);
         }
         activeLayer.add(constructionLine);
         constructionLine = null;
     }
 
-    public void traceHorizontalLine(Point point) {
-        constructionLine = new ConstructionLine(point, new Point(point.getX() + 1, point.getY()), this);
+    public void traceHorizontalLine() {
+        constructionLine = new ConstructionLine(this.cursorPosition,
+                new Point(this.cursorPosition.getX() + 1, this.cursorPosition.getY()), this);
         activeLayer.add(constructionLine);
         constructionLine = null;
     }
 
-    public void endHorizontalLine(Point point) {
-        traceHorizontalLine(constructionLine.getFirstPoint());
+    public void endHorizontalLine() {
+        traceHorizontalLine();
     }
 
-    public void traceVerticalLine(Point point) {
-        constructionLine = new ConstructionLine(point, new Point(point.getX(), point.getY() + 1), this);
+    public void traceVerticalLine() {
+        constructionLine = new ConstructionLine(this.cursorPosition,
+                new Point(this.cursorPosition.getX(), this.cursorPosition.getY() + 1), this);
         activeLayer.add(constructionLine);
         constructionLine = null;
     }
 
-    public void endVerticalLine(Point point) {
-        traceVerticalLine(constructionLine.getFirstPoint());
+    public void endVerticalLine() {
+        traceVerticalLine();
     }
 
-    public void traceAngleLine(Point point) {
+    public void traceAngleLine() {
         // TODO
     }
+
+    /* DETECTION */
 
     public void updateNearestSegments() {
         List<Drawable> segments = activeLayer.stream()

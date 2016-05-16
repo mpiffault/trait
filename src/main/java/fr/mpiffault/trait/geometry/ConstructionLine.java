@@ -11,7 +11,7 @@ public class ConstructionLine implements Drawable{
     @Getter
     private final Point firstPoint;
     @Getter
-    private final Point secondPoint;
+    private Point secondPoint;
     private double coefficient;
     private double shift;
     private boolean vertical = false;
@@ -21,7 +21,17 @@ public class ConstructionLine implements Drawable{
         this.firstPoint = firstPoint;
         this.secondPoint = secondPoint;
         this.table = table;
+        calculateCoefficients();
+    }
+
+    public void setSecondPoint(Point point) {
+        this.secondPoint = point;
+        calculateCoefficients();
+    }
+
+    private void calculateCoefficients() {
         if ((secondPoint.getX() - firstPoint.getX()) != 0D) {
+            vertical = false;
             coefficient = (secondPoint.getY() - firstPoint.getY()) / (secondPoint.getX() - firstPoint.getX());
             shift = firstPoint.getY() - (coefficient * firstPoint.getX());
         } else {
@@ -41,7 +51,12 @@ public class ConstructionLine implements Drawable{
         double xb = table.getWidth();
         double yb = coefficient * xb + shift;
 
-        if (!vertical) {
+        if (vertical) {
+            xa = coefficient;
+            ya = 0;
+            xb = coefficient;
+            yb = table.getWidth();
+        } else {
             if (ya < 0D) {
                 ya = 0D;
                 xa = (ya - shift) / coefficient;
@@ -50,11 +65,6 @@ public class ConstructionLine implements Drawable{
                 yb = 0D;
                 xb = (yb - shift) / coefficient;
             }
-        } else {
-            xa = coefficient;
-            ya = 0;
-            xb = coefficient;
-            yb = table.getWidth();
         }
 
         Point pa = new Point(xa, ya);
