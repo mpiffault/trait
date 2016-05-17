@@ -96,11 +96,6 @@ public class ConstructionLine extends AbstractLine implements Drawable, Intersec
     }
 
     @Override
-    public Point[] getIntersection(Intersectable otherIntersectable) {
-        return new Point[0];
-    }
-
-    @Override
     public double ptDist(Point cursorPosition) {
         return this.line.ptLineDist(cursorPosition);
     }
