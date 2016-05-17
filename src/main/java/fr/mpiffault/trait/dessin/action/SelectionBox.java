@@ -2,7 +2,7 @@ package fr.mpiffault.trait.dessin.action;
 
 import fr.mpiffault.trait.dessin.Table;
 import fr.mpiffault.trait.geometry.Point;
-import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
+import fr.mpiffault.trait.dessin.Drawable;
 import lombok.Getter;
 import lombok.Setter;
 

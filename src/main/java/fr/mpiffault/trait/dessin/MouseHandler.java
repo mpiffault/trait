@@ -115,7 +115,8 @@ public class MouseHandler extends MouseInputAdapter{
         long deltaTime = currentTime - previousTime;
         if (deltaTime > SNAP_UPDATE_INTERVAL) {
             previousTime = currentTime;
-            table.updateNearestSegments();
+            table.updateNearestIntersectableList();
+            table.updateNearestIntersection();
         }
 
         switch (table.getCurrentMode()) {

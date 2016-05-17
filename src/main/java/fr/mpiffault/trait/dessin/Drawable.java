@@ -1,4 +1,4 @@
-package fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin;
+package fr.mpiffault.trait.dessin;
 
 import java.awt.*;
 

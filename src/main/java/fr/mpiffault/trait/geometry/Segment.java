@@ -1,14 +1,13 @@
 package fr.mpiffault.trait.geometry;
 
+import fr.mpiffault.trait.dessin.Drawable;
 import fr.mpiffault.trait.dessin.Selectable;
 import fr.mpiffault.trait.dessin.Table;
-import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
-public class Segment extends Line2D.Double implements Drawable, Selectable {
+public class Segment extends AbstractLine implements Drawable, Selectable, Intersectable {
 
     public Segment(Point startPoint, Point endPoint) {
         super(startPoint, endPoint);
@@ -26,6 +25,7 @@ public class Segment extends Line2D.Double implements Drawable, Selectable {
         g2.draw(this);
     }
 
+    @Override
     public void drawNearest(Graphics2D g2) {
         BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
         g2.setStroke(basicStroke);
@@ -62,38 +62,55 @@ public class Segment extends Line2D.Double implements Drawable, Selectable {
         super.y2 = endPoint.getY();
     }
 
-    protected Point getMiddle() {
-        return new Point(this.x2 - this.x1, this.y2 - this.y1);
-    }
+    @Override
+    public Point[] getIntersection(Intersectable other) {
+        Point[] intersectionPoints = null;
 
-    public Point getIntersection(Segment other) {
 
-        Point thisMiddlePoint = this.getMiddle();
-        Point otherMiddlePoint = other.getMiddle();
+        if (other instanceof AbstractLine) {
+            AbstractLine otherLine = (AbstractLine) other;
+            intersectionPoints = new Point[1];
 
-        Point intersectionPoint = null;
+            Point thisMiddlePoint = this.getMiddle();
+            Point otherMiddlePoint = otherLine.getMiddle();
 
-        double otherCoeff, thisCoeff;
-        double determinant = (-otherMiddlePoint.getX() * thisMiddlePoint.getY() + thisMiddlePoint.getX() * otherMiddlePoint.getY());
 
-        if (determinant != 0) {
-            double otherDenominator = (-thisMiddlePoint.getY() * (this.x1 - other.x1) + thisMiddlePoint.getX() * (this.y1 - other.y1));
-            otherCoeff = otherDenominator / determinant;
+            double otherCoeff, thisCoeff;
+            double determinant = (-otherMiddlePoint.getX() * thisMiddlePoint.getY() + thisMiddlePoint.getX() * otherMiddlePoint.getY());
 
-            if (otherCoeff >= 0 && otherCoeff <= 1) {
-                double thisDenominator = (otherMiddlePoint.getX() * (this.y1 - other.y1) - otherMiddlePoint.getY() * (this.x1 - other.x1));
-                thisCoeff = thisDenominator / determinant;
+            if (determinant != 0) {
+                double otherDenominator = (-thisMiddlePoint.getY() * (this.x1 - otherLine.x1) + thisMiddlePoint.getX() * (this.y1 - otherLine.y1));
+                otherCoeff = otherDenominator / determinant;
+                if (other instanceof Segment) {
+                    if (otherCoeff >= 0 && otherCoeff <= 1) {
+                        double thisDenominator = (getThisIntersectionDenominator(otherLine, otherMiddlePoint));
+                        thisCoeff = thisDenominator / determinant;
 
-                if (thisCoeff >= 0 && thisCoeff <= 1) {
-                    intersectionPoint = new Point(this.x1 + (thisCoeff * thisMiddlePoint.getX()), this.y1 + (thisCoeff * thisMiddlePoint.getY()));
+                        if (thisCoeff >= 0 && thisCoeff <= 1) {
+                            intersectionPoints[0] = getIntersectionPoint(thisMiddlePoint, thisCoeff);
+                        }
+                    }
+                } else {
+                    double thisDenominator = getThisIntersectionDenominator(otherLine, otherMiddlePoint);
+                    thisCoeff = thisDenominator / determinant;
+                    intersectionPoints[0] = getIntersectionPoint(thisMiddlePoint, thisCoeff);
                 }
             }
         }
 
-        return intersectionPoint;
+        return intersectionPoints;
     }
 
-    public Point getIntersection(ConstructionLine constructionLine) {
-        return null;
+    private double getThisIntersectionDenominator(AbstractLine otherLine, Point otherMiddlePoint) {
+        return otherMiddlePoint.getX() * (this.y1 - otherLine.y1) - otherMiddlePoint.getY() * (this.x1 - otherLine.x1);
+    }
+
+    private Point getIntersectionPoint(Point thisMiddlePoint, double thisCoeff) {
+        return new Point(this.x1 + (thisCoeff * thisMiddlePoint.getX()), this.y1 + (thisCoeff * thisMiddlePoint.getY()));
+    }
+
+    @Override
+    public double ptDist(Point cursorPosition) {
+        return this.ptSegDist(cursorPosition);
     }
 }

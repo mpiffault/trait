@@ -22,7 +22,7 @@ public class Trait {
                 super.validate();
             }
         };
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         Table table = new Table(WIDTH, HEIGHT);
 

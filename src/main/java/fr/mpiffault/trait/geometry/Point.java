@@ -1,8 +1,8 @@
 package fr.mpiffault.trait.geometry;
 
+import fr.mpiffault.trait.dessin.Drawable;
 import fr.mpiffault.trait.dessin.Selectable;
 import fr.mpiffault.trait.dessin.Table;
-import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
 import lombok.Getter;
 
 import java.awt.*;
@@ -35,7 +35,11 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
 
     @Override
     public void drawHightlighted(Graphics2D g2) {
-
+        BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
+        g2.setStroke(basicStroke);
+        g2.setColor(Color.RED);
+        this.drawPoint(g2);
+        g2.setStroke(new BasicStroke());
     }
 
     @Override

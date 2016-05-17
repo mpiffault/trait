@@ -3,9 +3,9 @@ package fr.mpiffault.trait.dessin;
 import fr.mpiffault.trait.dessin.action.SelectionBox;
 import fr.mpiffault.trait.dessin.action.TracingSegment;
 import fr.mpiffault.trait.geometry.ConstructionLine;
+import fr.mpiffault.trait.geometry.Intersectable;
 import fr.mpiffault.trait.geometry.Point;
 import fr.mpiffault.trait.geometry.Segment;
-import fr.mpiffault.trait.geometry.fr.mpiffault.trait.dessin.Drawable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Table extends JPanel {
-
-    private static final int MAIN_LAYER = 0;
 
     public static final Color BACKGROUND = Color.DARK_GRAY;
     public static final Color FOREGROUND = Color.WHITE;
@@ -36,15 +34,16 @@ public class Table extends JPanel {
     @Setter
     private Point cursorPosition = new Point(0D,0D);
 
-    private final ArrayList<LinkedList<Drawable>> layers = new ArrayList<>();
     private LinkedList<Drawable> activeLayer;
     private final Set<Selectable> selected = new LinkedHashSet<>();
 
     private SelectionBox selectionBox;
     private TracingSegment tracingSegment;
     private ConstructionLine constructionLine;
-    private List nearestSegments;
-    private Segment nearestSegment;
+    private List<Intersectable> nearestIntersectableList;
+    private Intersectable nearestIntersectable;
+    private ArrayList<Point> nearestIntersectionList = new ArrayList<>();
+    private Point nearestIntersection;
 
     public Table(int width, int height) {
         this.width = width;
@@ -55,9 +54,10 @@ public class Table extends JPanel {
 
         LinkedList<Drawable> mainLayer = new LinkedList<>();
         activeLayer = mainLayer;
+        ArrayList<LinkedList<Drawable>> layers = new ArrayList<LinkedList<Drawable>>();
         layers.add(mainLayer);
 
-        nearestSegments = new ArrayList<>();
+        nearestIntersectableList = new ArrayList<>();
     }
 
     /* DRAWING */
@@ -86,12 +86,15 @@ public class Table extends JPanel {
             } else {
                 drawable.draw(g2);
             }
-            if (this.nearestSegments.contains(drawable)) {
+            if (drawable instanceof Intersectable && this.nearestIntersectableList.contains(drawable)) {
                 drawable.drawHightlighted(g2);
             }
         }
-        if (this.nearestSegment != null) {
-            this.nearestSegment.drawNearest(g2);
+        if (this.nearestIntersectable != null) {
+            this.nearestIntersectable.drawNearest(g2);
+        }
+        if (this.nearestIntersection != null) {
+            this.nearestIntersection.drawHightlighted(g2);
         }
         if (this.ongoingSelectionBox()) {
             this.selectionBox.draw(g2);
@@ -282,14 +285,40 @@ public class Table extends JPanel {
 
     /* DETECTION */
 
-    public void updateNearestSegments() {
-        List<Drawable> segments = activeLayer.stream()
-                .filter(drawable -> drawable instanceof Segment)
-                .sorted((o1, o2) -> Double.compare(((Segment) o1).ptSegDist(cursorPosition), ((Segment) o2).ptSegDist(cursorPosition)))
+    public void updateNearestIntersectableList() {
+        List<Intersectable> intersectableList = this.activeLayer.stream()
+                .filter(drawable -> drawable instanceof Intersectable)
+                .map(drawable -> (Intersectable) drawable)
                 .collect(Collectors.toList());
-        this.nearestSegments = segments.subList(0,Math.min(segments.size(), 3));
-        if (!this.nearestSegments.isEmpty()) {
-            this.nearestSegment = (Segment) segments.get(0);
+
+        intersectableList.sort((i1, i2) -> Double.compare(i1.ptDist(cursorPosition), i2.ptDist(cursorPosition)));
+
+        this.nearestIntersectableList = intersectableList.subList(0,Math.min(intersectableList.size(), 3));
+        if (!nearestIntersectableList.isEmpty()) {
+            this.nearestIntersectable = this.nearestIntersectableList.get(0);
+        }
+    }
+
+    public void updateNearestIntersection() {
+        this.nearestIntersectionList.clear();
+        for (Intersectable intersectable : this.nearestIntersectableList) {
+            List<Intersectable> subList = this.nearestIntersectableList.subList(1, Math.min(nearestIntersectableList.size(), 3));
+            if (!subList.isEmpty()) {
+                for (Intersectable s2 : subList) {
+                    this.nearestIntersectionList.addAll(Arrays.asList(intersectable.getIntersection(s2)));
+                }
+            }
+        }
+        if (!this.nearestIntersectionList.isEmpty()) {
+            if(this.nearestIntersectionList.size() > 1) {
+                this.nearestIntersectionList.sort((o1, o2) -> {
+                    if (o1 != null && o2 != null) {
+                        return Double.compare(cursorPosition.distance(o1), cursorPosition.distance(o2));
+                    }
+                    return 0;
+                });
+            }
+            this.nearestIntersection = this.nearestIntersectionList.get(0);
         }
     }
 }
