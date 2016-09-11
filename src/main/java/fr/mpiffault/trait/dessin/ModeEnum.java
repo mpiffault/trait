@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.awt.event.KeyEvent;
 
-public enum Mode {
+public enum ModeEnum {
     SELECTION("SELECTION", KeyEvent.VK_SPACE, null),
     POINT("POINT", KeyEvent.VK_P, SELECTION),
 
@@ -21,40 +21,40 @@ public enum Mode {
 
     MESURE("MESURE", KeyEvent.VK_M, SELECTION);
 
-    private final static Mode DEFAULT_MODE = SELECTION;
+    private final static ModeEnum DEFAULT_MODE_ENUM = SELECTION;
 
     @Getter private int keyEvent;
     @Getter private String name;
-    private Mode parentMode;
+    private ModeEnum parentModeEnum;
 
-    Mode(String name, int keyEvent, Mode requiredMode) {
+    ModeEnum(String name, int keyEvent, ModeEnum requiredModeEnum) {
         this.name = name;
         this.keyEvent = keyEvent;
-        this.parentMode = requiredMode;
+        this.parentModeEnum = requiredModeEnum;
     }
 
-    public static Mode fromEventAndMode(int keyEvent, Mode currentMode) {
+    public static ModeEnum fromEventAndMode(int keyEvent, ModeEnum currentModeEnum) {
         if (keyEvent == KeyEvent.VK_ESCAPE) {
-            return currentMode.getParentMode();
+            return currentModeEnum.getParentModeEnum();
         }
-        for (Mode modeValue : values()) {
-            if (modeValue.isValidFor(currentMode, keyEvent)) {
-                return modeValue;
+        for (ModeEnum modeEnumValue : values()) {
+            if (modeEnumValue.isValidFor(currentModeEnum, keyEvent)) {
+                return modeEnumValue;
             }
         }
-        return currentMode;
+        return currentModeEnum;
     }
 
-    private boolean isValidFor(Mode currentMode, int keyEvent) {
-        return (this.parentMode == null || this.parentMode == currentMode)
+    private boolean isValidFor(ModeEnum currentModeEnum, int keyEvent) {
+        return (this.parentModeEnum == null || this.parentModeEnum == currentModeEnum)
                 && keyEvent == this.keyEvent;
     }
 
-    private Mode getParentMode() {
-        if (this.parentMode != null) {
-            return this.parentMode;
+    private ModeEnum getParentModeEnum() {
+        if (this.parentModeEnum != null) {
+            return this.parentModeEnum;
         } else {
-            return DEFAULT_MODE;
+            return DEFAULT_MODE_ENUM;
         }
     }
 }

@@ -23,6 +23,7 @@ public class Trait {
             }
         };
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
 
         Table table = new Table(WIDTH, HEIGHT);
 
@@ -34,18 +35,25 @@ public class Trait {
         KeyboardHandler keyboardHandler = new KeyboardHandler(table);
         table.addKeyListener(keyboardHandler);
 
-        // table.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         Image cursorImage = new BufferedImage(1,1,BufferedImage.TYPE_3BYTE_BGR);
-        ((BufferedImage)cursorImage).setRGB(0,0,0x000000);
+        ((BufferedImage)cursorImage).setRGB(0,0,Color.BLACK.getRGB());
         Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(0,0), "pointCursor");
 
         table.setCursor(cursor);
 
-        frame.add(table);
-        frame.setContentPane(table);
+        frame.add(table, BorderLayout.CENTER);
+
+        JPanel tools = new JPanel();
+        frame.add(tools, BorderLayout.EAST);
+
+
+
         frame.setSize(WIDTH + 1, HEIGHT + 38);
         frame.setVisible(true);
 
-        System.out.println("---\n<space> for SELECTION (default)\n'p' for POINT\n's' for SEGMENT\n'c' for CONSTRUCTION");
+        System.out.println("---\n<space> for SELECTION (default)\n" +
+                "'p' for POINT\n" +
+                "'s' for SEGMENT\n" +
+                "'c' for CONSTRUCTION");
     }
 }

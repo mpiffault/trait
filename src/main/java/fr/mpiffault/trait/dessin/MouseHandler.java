@@ -1,5 +1,6 @@
 package fr.mpiffault.trait.dessin;
 
+import fr.mpiffault.trait.geometry.AbstractLine;
 import fr.mpiffault.trait.geometry.Point;
 
 import javax.swing.event.MouseInputAdapter;
@@ -29,20 +30,20 @@ public class MouseHandler extends MouseInputAdapter{
     }
 
     private void rightClickActions(MouseEvent e) {
-        switch (table.getCurrentMode()) {
-            case SEGMENT:
-                if (table.ongoingAction()) {
-                    table.cancelCurrentAction();
-                }
-            default:
-                break;
+        if (table.ongoingAction()) {
+            table.cancelCurrentAction();
+        } else {
+            switch (table.getCurrentModeEnum()) {
+                case SEGMENT:
+                default:
+            }
         }
     }
 
     private void leftClickActions(MouseEvent e) {
         Point point = new Point(e.getX(), e.getY());
         table.setCursorPosition(point);
-        switch (table.getCurrentMode()) {
+        switch (table.getCurrentModeEnum()) {
             case SELECTION:
                 table.selectObjectAt(point, e.isShiftDown());
                 break;
@@ -93,7 +94,7 @@ public class MouseHandler extends MouseInputAdapter{
     public void mouseDragged(MouseEvent e) {
         Point point = new Point(e.getX(), e.getY());
         table.setCursorPosition(point);
-        switch (table.getCurrentMode()) {
+        switch (table.getCurrentModeEnum()) {
             case SELECTION:
                 if (!table.ongoingSelectionBox()) {
                     table.initSelectionBox();
@@ -119,7 +120,7 @@ public class MouseHandler extends MouseInputAdapter{
             table.updateNearestIntersection();
         }
 
-        switch (table.getCurrentMode()) {
+        switch (table.getCurrentModeEnum()) {
             case SEGMENT:
                 if (table.ongoingSegment()) {
                     table.updateTracingSegment();
@@ -134,7 +135,7 @@ public class MouseHandler extends MouseInputAdapter{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        switch (table.getCurrentMode()) {
+        switch (table.getCurrentModeEnum()) {
             default:
                 break;
         }
@@ -145,7 +146,7 @@ public class MouseHandler extends MouseInputAdapter{
         boolean mod = false;
         Point point = new Point(e.getX(), e.getY());
         table.setCursorPosition(point);
-        switch (table.getCurrentMode()) {
+        switch (table.getCurrentModeEnum()) {
             case SELECTION:
                 if (table.ongoingSelectionBox()) {
                     table.endSelectionBox(e.isShiftDown());

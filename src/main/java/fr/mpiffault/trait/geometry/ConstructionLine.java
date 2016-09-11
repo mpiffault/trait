@@ -6,7 +6,7 @@ import fr.mpiffault.trait.dessin.Table;
 import java.awt.*;
 import java.awt.geom.Line2D;
 
-public class ConstructionLine extends AbstractLine implements Drawable, Intersectable {
+public class ConstructionLine extends AbstractLine implements Drawable {
     private double coefficient;
     private double shift;
     private boolean vertical = false;
@@ -92,7 +92,15 @@ public class ConstructionLine extends AbstractLine implements Drawable, Intersec
 
     @Override
     public void drawHightlighted(Graphics2D g2) {
+        final float dash[] = {7.0f};
+        BasicStroke basicStroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
+        g2.setStroke(basicStroke);
+        g2.setColor(Table.HIGHTLIGHTED);
 
+        calculateLineToDraw();
+
+        g2.draw(line);
+        g2.setStroke(new BasicStroke());
     }
 
     @Override

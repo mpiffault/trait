@@ -7,7 +7,7 @@ import fr.mpiffault.trait.dessin.Table;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-public class Segment extends AbstractLine implements Drawable, Selectable, Intersectable {
+public class Segment extends AbstractLine implements Drawable, Selectable {
 
     public Segment(Point startPoint, Point endPoint) {
         super(startPoint, endPoint);

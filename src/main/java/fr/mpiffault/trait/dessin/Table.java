@@ -29,12 +29,13 @@ public class Table extends JPanel {
     private int width, height;
 
     @Getter
-    private Mode currentMode;
+    private ModeEnum currentModeEnum;
 
     @Setter
     private Point cursorPosition = new Point(0D,0D);
 
     private LinkedList<Drawable> activeLayer;
+    private LinkedList<ConstructionLine> constructionLayer;
     private final Set<Selectable> selected = new LinkedHashSet<>();
 
     private SelectionBox selectionBox;
@@ -42,20 +43,18 @@ public class Table extends JPanel {
     private ConstructionLine constructionLine;
     private List<Intersectable> nearestIntersectableList;
     private Intersectable nearestIntersectable;
-    private ArrayList<Point> nearestIntersectionList = new ArrayList<>();
-    private Point nearestIntersection;
+    private ArrayList<Point> nearestSnapPointList = new ArrayList<>();
+    private Point nearestSnapPoint;
 
     public Table(int width, int height) {
         this.width = width;
         this.height = height;
         this.setBackground(BACKGROUND);
 
-        this.currentMode = Mode.SELECTION;
+        this.currentModeEnum = ModeEnum.SELECTION;
 
-        LinkedList<Drawable> mainLayer = new LinkedList<>();
-        activeLayer = mainLayer;
-        ArrayList<LinkedList<Drawable>> layers = new ArrayList<LinkedList<Drawable>>();
-        layers.add(mainLayer);
+        activeLayer = new LinkedList<>();
+        constructionLayer = new LinkedList<>();
 
         nearestIntersectableList = new ArrayList<>();
     }
@@ -80,6 +79,9 @@ public class Table extends JPanel {
     }
 
     private void paintDrawables(Graphics2D g2) {
+        for (ConstructionLine constructionLine : constructionLayer) {
+            constructionLine.draw(g2);
+        }
         for (Drawable drawable : activeLayer) {
             if (drawable instanceof Selectable && selected.contains(drawable)) {
                 ((Selectable)drawable).drawSelected(g2);
@@ -93,8 +95,8 @@ public class Table extends JPanel {
         if (this.nearestIntersectable != null) {
             this.nearestIntersectable.drawNearest(g2);
         }
-        if (this.nearestIntersection != null) {
-            this.nearestIntersection.drawHightlighted(g2);
+        if (this.nearestSnapPoint != null) {
+            this.nearestSnapPoint.drawHightlighted(g2);
         }
         if (this.ongoingSelectionBox()) {
             this.selectionBox.draw(g2);
@@ -109,11 +111,11 @@ public class Table extends JPanel {
 
     private void paintModeLabel(Graphics2D g2) {
         g2.setColor(UI_TEXT);
-        g2.drawString(currentMode.getName(), 20, 20);
+        g2.drawString(currentModeEnum.getName(), 20, 20);
     }
 
-    public void setCurrentMode(Mode mode) {
-        this.currentMode = mode;
+    public void setCurrentMode(ModeEnum modeEnum) {
+        this.currentModeEnum = modeEnum;
     }
 
     public boolean ongoingAction() {
@@ -213,7 +215,12 @@ public class Table extends JPanel {
     /* SEGMENT */
 
     public void initSegmentTrace() {
-        this.tracingSegment = new TracingSegment(this.cursorPosition);
+        Point initPoint = getClicPoint();
+        this.tracingSegment = new TracingSegment(initPoint);
+    }
+
+    private Point getClicPoint() {
+        return this.nearestSnapPoint != null ? this.nearestSnapPoint : this.cursorPosition;
     }
 
     public boolean ongoingSegment() {
@@ -222,7 +229,7 @@ public class Table extends JPanel {
 
     public void updateTracingSegment() {
         if (ongoingSegment()) {
-            this.tracingSegment.setEndPoint(this.cursorPosition);
+            this.tracingSegment.setEndPoint(getClicPoint());
         }
     }
 
@@ -253,14 +260,14 @@ public class Table extends JPanel {
             //constructionLine = new ConstructionLine(constructionLine.getFirstPoint(), this.cursorPosition, this);
             constructionLine.setSecondPoint(this.cursorPosition);
         }
-        activeLayer.add(constructionLine);
+        constructionLayer.add(constructionLine);
         constructionLine = null;
     }
 
     public void traceHorizontalLine() {
         constructionLine = new ConstructionLine(this.cursorPosition,
                 new Point(this.cursorPosition.getX() + 1, this.cursorPosition.getY()), this);
-        activeLayer.add(constructionLine);
+        constructionLayer.add(constructionLine);
         constructionLine = null;
     }
 
@@ -271,7 +278,7 @@ public class Table extends JPanel {
     public void traceVerticalLine() {
         constructionLine = new ConstructionLine(this.cursorPosition,
                 new Point(this.cursorPosition.getX(), this.cursorPosition.getY() + 1), this);
-        activeLayer.add(constructionLine);
+        constructionLayer.add(constructionLine);
         constructionLine = null;
     }
 
@@ -300,25 +307,52 @@ public class Table extends JPanel {
     }
 
     public void updateNearestIntersection() {
-        this.nearestIntersectionList.clear();
+        this.nearestSnapPointList = seakAllIntersectionPoints();
+        if (!this.nearestSnapPointList.isEmpty()) {
+            orderIntersectionPoints();
+            Point localIntersection = this.nearestSnapPointList.get(0);
+            if (localIntersection.distanceSq(this.cursorPosition) < 5) {
+                this.nearestSnapPoint = localIntersection;
+            } else {
+                this.nearestSnapPoint = null;
+            }
+        }
+    }
+
+    private void orderIntersectionPoints() {
+        if(this.nearestSnapPointList.size() > 1) {
+            this.nearestSnapPointList.sort((o1, o2) -> {
+                if (o1 != null && o2 != null) {
+                    return Double.compare(cursorPosition.distance(o1), cursorPosition.distance(o2));
+                }
+                return 0;
+            });
+        }
+    }
+
+    private ArrayList<Point> seakAllIntersectionPoints() {
+        ArrayList<Point> intersectionPointsList = new ArrayList<>();
         for (Intersectable intersectable : this.nearestIntersectableList) {
             List<Intersectable> subList = this.nearestIntersectableList.subList(1, Math.min(nearestIntersectableList.size(), 3));
             if (!subList.isEmpty()) {
                 for (Intersectable s2 : subList) {
-                    this.nearestIntersectionList.addAll(Arrays.asList(intersectable.getIntersection(s2)));
+                    Point[] intersections = intersectable.getIntersection(s2);
+                    if(intersections != null){
+                        this.nearestSnapPointList.addAll(Arrays.asList(intersections));
+                    }
                 }
             }
         }
-        if (!this.nearestIntersectionList.isEmpty()) {
-            if(this.nearestIntersectionList.size() > 1) {
-                this.nearestIntersectionList.sort((o1, o2) -> {
-                    if (o1 != null && o2 != null) {
-                        return Double.compare(cursorPosition.distance(o1), cursorPosition.distance(o2));
-                    }
-                    return 0;
-                });
+        return intersectionPointsList;
+    }
+
+    public void clearConstructionLines() {
+        Iterator<Drawable> it = this.activeLayer.descendingIterator();
+        while (it.hasNext()) {
+            Drawable d = it.next();
+            if (d instanceof ConstructionLine) {
+                it.remove();
             }
-            this.nearestIntersection = this.nearestIntersectionList.get(0);
         }
     }
 }

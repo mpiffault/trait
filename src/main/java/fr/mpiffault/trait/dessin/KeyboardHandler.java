@@ -15,31 +15,31 @@ public class KeyboardHandler extends KeyAdapter {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         super.keyPressed(keyEvent);
-        boolean actionCanceled = false;
-        if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            actionCanceled = cancelActionIfNeeded();
-        }
-        switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_ESCAPE:
-                actionCanceled = cancelActionIfNeeded();
-                break;
-            case KeyEvent.VK_DELETE:
-                this.table.deleteSelectedObjects();
-                break;
-            default:
-                break;
-        }
-        if (!actionCanceled) {
-            this.table.setCurrentMode(Mode.fromEventAndMode(keyEvent.getKeyCode(), table.getCurrentMode()));
+
+        if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE && table.ongoingAction()) {
+            table.cancelCurrentAction();
+        } else {
+            performSpecialActions(keyEvent);
+            switchMode(keyEvent);
         }
         this.table.repaint();
     }
 
-    private boolean cancelActionIfNeeded() {
-        if (table.ongoingAction()) {
-            table.cancelCurrentAction();
-            return true;
+    private void switchMode(KeyEvent keyEvent) {
+        ModeEnum newModeEnum = ModeEnum.fromEventAndMode(keyEvent.getKeyCode(), table.getCurrentModeEnum());
+        this.table.setCurrentMode(newModeEnum);
+    }
+
+    private void performSpecialActions(KeyEvent keyEvent) {
+        switch (keyEvent.getKeyCode()) {
+            case KeyEvent.VK_DELETE:
+                this.table.deleteSelectedObjects();
+                break;
+            case KeyEvent.VK_X:
+                table.clearConstructionLines();
+                break;
+            default:
+                break;
         }
-        return false;
     }
 }

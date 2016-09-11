@@ -21,7 +21,6 @@ public abstract class AbstractLine extends Line2D.Double implements Intersectabl
 
         if (other instanceof AbstractLine) {
             AbstractLine otherLine = (AbstractLine) other;
-            intersectionPoints = new Point[1];
 
             Point thisMiddlePoint = this.getMiddle();
             Point otherMiddlePoint = otherLine.getMiddle();
@@ -39,12 +38,14 @@ public abstract class AbstractLine extends Line2D.Double implements Intersectabl
                         thisCoeff = thisDenominator / determinant;
 
                         if (thisCoeff >= 0 && thisCoeff <= 1) {
+                            intersectionPoints = new Point[1];
                             intersectionPoints[0] = getIntersectionPoint(thisMiddlePoint, thisCoeff);
                         }
                     }
                 } else {
                     double thisDenominator = getThisIntersectionDenominator(otherLine, otherMiddlePoint);
                     thisCoeff = thisDenominator / determinant;
+                    intersectionPoints = new Point[1];
                     intersectionPoints[0] = getIntersectionPoint(thisMiddlePoint, thisCoeff);
                 }
             }
