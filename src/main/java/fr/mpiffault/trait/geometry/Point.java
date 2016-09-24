@@ -11,8 +11,8 @@ import java.awt.geom.Rectangle2D;
 
 public class Point extends Point2D.Double implements Drawable, Selectable {
 
-    @Getter
-    private double x, y;
+/*    @Getter
+    private double x, y;*/
 
     private double size = 4.0;
     private double halfSize = 2.0;
@@ -23,6 +23,7 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
     }
 
     public Point(Point2D point2D) {
+        this(point2D.getX(), point2D.getY());
         this.x = point2D.getX();
         this.y = point2D.getY();
     }

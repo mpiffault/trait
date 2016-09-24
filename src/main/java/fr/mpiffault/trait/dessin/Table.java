@@ -2,10 +2,8 @@ package fr.mpiffault.trait.dessin;
 
 import fr.mpiffault.trait.dessin.action.SelectionBox;
 import fr.mpiffault.trait.dessin.action.TracingSegment;
-import fr.mpiffault.trait.geometry.ConstructionLine;
-import fr.mpiffault.trait.geometry.Intersectable;
+import fr.mpiffault.trait.geometry.*;
 import fr.mpiffault.trait.geometry.Point;
-import fr.mpiffault.trait.geometry.Segment;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,6 +43,8 @@ public class Table extends JPanel {
     private Intersectable nearestIntersectable;
     private ArrayList<Point> nearestSnapPointList = new ArrayList<>();
     private Point nearestSnapPoint;
+
+    private SimpleBezier tracingCurve;
 
     public Table(int width, int height) {
         this.width = width;
@@ -106,6 +106,9 @@ public class Table extends JPanel {
         }
         if (this.ongoingConstructionLine()) {
             this.constructionLine.draw(g2);
+        }
+        if (ongoingCurve()) {
+            this.tracingCurve.draw(g2);
         }
     }
 
@@ -352,6 +355,37 @@ public class Table extends JPanel {
             Drawable d = it.next();
             if (d instanceof ConstructionLine) {
                 it.remove();
+            }
+        }
+    }
+
+    public boolean ongoingCurve() {
+        return tracingCurve != null;
+    }
+
+    public void initCurveTrace() {
+        if (!ongoingCurve()) {
+            tracingCurve = new SimpleBezier();
+            tracingCurve.setPStart(this.cursorPosition);
+        }
+    }
+
+    public void addCurvePoint() {
+        if (ongoingCurve()) {
+            if (tracingCurve.getPStart() == null) {
+                tracingCurve.setPStart(cursorPosition);
+                System.out.println("Started curve at " + cursorPosition);
+            } else if (tracingCurve.getPEnd() == null) {
+                tracingCurve.setPEnd(cursorPosition);
+                System.out.println("Added end point at " + cursorPosition);
+            } else if (tracingCurve.getPCtrlStart() == null) {
+                tracingCurve.setPCtrlStart(cursorPosition);
+                System.out.println("Added firs control point at " + cursorPosition);
+            } else if (tracingCurve.getPCtrlEnd() == null) {
+                tracingCurve.setPCtrlEnd(cursorPosition);
+                this.activeLayer.add(tracingCurve);
+                tracingCurve = null;
+                System.out.println("Added end control point at " + cursorPosition);
             }
         }
     }
