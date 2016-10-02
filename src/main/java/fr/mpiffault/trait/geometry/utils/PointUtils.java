@@ -17,16 +17,16 @@ public class PointUtils {
         }
 
 
+//
+//        double p1Degree = (getAngle(p1Normalized) / Math.PI) * 180.0;
+//        double p2Degree = (getAngle(p2Normalized) / Math.PI) * 180.0;
+//        double degreeAngle = (bissectAngle / Math.PI) * 180.0;
+//
+//        System.out.println("Angle p1 = " + p1Degree + "°");
+//        System.out.println("Angle p2 = " + p2Degree + "°");
+//        System.out.println("BissectAngle = " + degreeAngle + "°");
 
-        double p1Degree = (getAngle(p1Normalized) / Math.PI) * 180.0;
-        double p2Degree = (getAngle(p2Normalized) / Math.PI) * 180.0;
-        double degreeAngle = (bissectAngle / Math.PI) * 180.0;
-
-        System.out.println("Angle p1 = " + p1Degree + "°");
-        System.out.println("Angle p2 = " + p2Degree + "°");
-        System.out.println("BissectAngle = " + degreeAngle + "°");
-
-        return new Point(vertex.x + cos(bissectAngle)*50, vertex.y - sin(bissectAngle)*50);
+        return new Point(vertex.x + cos(bissectAngle), vertex.y - sin(bissectAngle));
     }
 
     public static double getAngle(Point p1Normalized) {
@@ -41,9 +41,13 @@ public class PointUtils {
     }
 
     public static Point rotatePointFromOrigin (Point point, Point origin, double angle) {
+        return homotheticRotatePointFromOrigin(point, origin, angle, 1.0);
+    }
+
+    public static Point homotheticRotatePointFromOrigin (Point point, Point origin, double angle, double ratio) {
         Point originatedPoint = new Point(point.x - origin.x, point.y - origin.y);
 
-        return new Point (origin.x + (originatedPoint.x * cos(angle) - originatedPoint.y * sin(angle))
-        ,origin.y + (originatedPoint.x * sin(angle) + originatedPoint.y * cos(angle)));
+        return new Point (origin.x + (originatedPoint.x * cos(angle) - originatedPoint.y * sin(angle)) * ratio
+        ,origin.y + (originatedPoint.x * sin(angle) + originatedPoint.y * cos(angle)) * ratio);
     }
 }

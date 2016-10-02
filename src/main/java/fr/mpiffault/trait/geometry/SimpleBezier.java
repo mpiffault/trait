@@ -41,10 +41,6 @@ public class SimpleBezier implements Drawable, Selectable{
     @Override
     public void draw(Graphics2D g2) {
         g2.setColor(Table.FOREGROUND);
-        if (pStart != null) pStart.draw(g2);
-        if (pCtrlStart != null) pCtrlStart.draw(g2);
-        if (pEnd != null) pEnd.draw(g2);
-        if (pCtrlEnd != null) pCtrlEnd.draw(g2);
         if (pStart != null && pCtrlStart != null && pEnd != null && pCtrlEnd != null) {
             g2.draw(new CubicCurve2D.Double(
                     pStart.getX(),

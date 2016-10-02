@@ -39,13 +39,17 @@ public class Curve implements Drawable {
             v1.getSelf().draw(g2);
         } else {
             do {
-                Point ctrl1 = PointUtils.rotatePointFromOrigin(v1.getBissectPoint(), v1.getSelf(), -(Math.PI / 2));
-                Point ctrl2 = PointUtils.rotatePointFromOrigin(v2.getBissectPoint(), v2.getSelf(), Math.PI / 2);
+                double distance = v1.getSelf().distance(v2.getSelf());
+                Point ctrl1 = PointUtils.homotheticRotatePointFromOrigin(v1.getBissectPoint(), v1.getSelf(), -(Math.PI / 2), distance / Math.PI);
+                Point ctrl2 = PointUtils.homotheticRotatePointFromOrigin(v2.getBissectPoint(), v2.getSelf(), Math.PI / 2, distance / Math.PI);
                 new SimpleBezier(v1.getSelf(), ctrl1, v2.getSelf(), ctrl2).draw(g2);
-                ctrl1.draw(g2, Color.CYAN);
-                ctrl2.draw(g2, Color.YELLOW);
-                v1.getBissectPoint().draw(g2, Color.RED);
-                v2.getBissectPoint().draw(g2, Color.ORANGE);
+
+                if ("true".equals(System.getProperty("GRAPH_DEBUG"))) {
+                    v1.getSelf().draw(g2);
+                    ctrl1.draw(g2, Color.CYAN);
+                    ctrl2.draw(g2, Color.YELLOW);
+                }
+
                 v1 = v2;
                 v2 = v1.getNext();
             } while (!v1.isLast());
