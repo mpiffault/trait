@@ -11,15 +11,16 @@ import java.awt.geom.Rectangle2D;
 
 public class Point extends Point2D.Double implements Drawable, Selectable {
 
-/*    @Getter
-    private double x, y;*/
-
     private double size = 4.0;
     private double halfSize = 2.0;
 
     public Point (double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Point() {
+        this(0.0,0.0);
     }
 
     public Point(Point2D point2D) {
@@ -31,6 +32,11 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
     @Override
     public void draw(Graphics2D g2) {
         g2.setColor(Table.FOREGROUND);
+        this.drawPoint(g2);
+    }
+
+    public void draw(Graphics2D g2, Color color) {
+        g2.setColor(color);
         this.drawPoint(g2);
     }
 

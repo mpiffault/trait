@@ -44,7 +44,7 @@ public class Table extends JPanel {
     private ArrayList<Point> nearestSnapPointList = new ArrayList<>();
     private Point nearestSnapPoint;
 
-    private SimpleBezier tracingCurve;
+    private Curve tracingCurve;
 
     public Table(int width, int height) {
         this.width = width;
@@ -365,28 +365,15 @@ public class Table extends JPanel {
 
     public void initCurveTrace() {
         if (!ongoingCurve()) {
-            tracingCurve = new SimpleBezier();
-            tracingCurve.setPStart(this.cursorPosition);
+            tracingCurve = new Curve(this.cursorPosition);
+            System.out.println("Init curve at : " + this.cursorPosition);
         }
     }
 
     public void addCurvePoint() {
         if (ongoingCurve()) {
-            if (tracingCurve.getPStart() == null) {
-                tracingCurve.setPStart(cursorPosition);
-                System.out.println("Started curve at " + cursorPosition);
-            } else if (tracingCurve.getPEnd() == null) {
-                tracingCurve.setPEnd(cursorPosition);
-                System.out.println("Added end point at " + cursorPosition);
-            } else if (tracingCurve.getPCtrlStart() == null) {
-                tracingCurve.setPCtrlStart(cursorPosition);
-                System.out.println("Added firs control point at " + cursorPosition);
-            } else if (tracingCurve.getPCtrlEnd() == null) {
-                tracingCurve.setPCtrlEnd(cursorPosition);
-                this.activeLayer.add(tracingCurve);
-                tracingCurve = null;
-                System.out.println("Added end control point at " + cursorPosition);
-            }
+            tracingCurve.addPoint(this.cursorPosition);
+            System.out.println("Added point : " + this.cursorPosition);
         }
     }
 }
