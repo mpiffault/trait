@@ -1,7 +1,6 @@
 package fr.mpiffault.trait.dessin;
 
 import fr.mpiffault.trait.Utils;
-import fr.mpiffault.trait.geometry.AbstractLine;
 import fr.mpiffault.trait.geometry.Point;
 
 import javax.swing.event.MouseInputAdapter;
@@ -19,7 +18,7 @@ public class MouseHandler extends MouseInputAdapter{
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        // FIXME : click while moving mouse : need to go through mousePressed + mouseReleased
         super.mouseClicked(e);
         if (e.getButton() == MouseEvent.BUTTON1) {
             leftClickActions(e);

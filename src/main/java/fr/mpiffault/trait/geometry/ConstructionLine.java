@@ -10,7 +10,7 @@ public class ConstructionLine extends AbstractLine implements Drawable {
     private double coefficient;
     private double shift;
     private boolean vertical = false;
-    private Table table;
+    private final Table table;
     private Line2D.Double line;
 
     public ConstructionLine(Point firstPoint, Point secondPoint, Table table) {

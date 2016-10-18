@@ -27,7 +27,7 @@ public enum ModeEnum {
 
     @Getter private int keyEvent;
     @Getter private String name;
-    private ModeEnum parentModeEnum;
+    private final ModeEnum parentModeEnum;
 
     ModeEnum(String name, int keyEvent, ModeEnum requiredModeEnum) {
         this.name = name;

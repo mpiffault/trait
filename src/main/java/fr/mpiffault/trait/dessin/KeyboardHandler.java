@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 
 public class KeyboardHandler extends KeyAdapter {
 
-    private Table table;
+    private final Table table;
 
     public KeyboardHandler(Table table) {
         super();

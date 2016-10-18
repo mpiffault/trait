@@ -17,10 +17,7 @@ public class Trait {
         System.setProperty("sun.java2d.opengl", "True");
 
         JFrame frame = new JFrame("Trait"){
-            @Override
-            public void validate() {
-                super.validate();
-            }
+            
         };
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());

@@ -1,15 +1,14 @@
 package fr.mpiffault.trait.geometry.utils;
 
+import fr.mpiffault.trait.geometry.Point;
+import org.junit.Test;
+
 import static fr.mpiffault.trait.geometry.utils.PointUtils.*;
 import static java.lang.Math.PI;
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
-import fr.mpiffault.trait.geometry.Point;
-
 public class PointUtilsTest {
-    private static double EPSILON = 0.00025;
+    private static final double EPSILON = 0.00025;
 
     @Test
     public void normalizeFromPointTest() throws Exception {

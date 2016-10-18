@@ -3,7 +3,6 @@ package fr.mpiffault.trait.geometry;
 import fr.mpiffault.trait.dessin.Drawable;
 import fr.mpiffault.trait.dessin.Selectable;
 import fr.mpiffault.trait.dessin.Table;
-import lombok.Getter;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

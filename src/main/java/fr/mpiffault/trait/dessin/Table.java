@@ -32,8 +32,8 @@ public class Table extends JPanel {
     @Setter
     private Point cursorPosition = new Point(0D,0D);
 
-    private LinkedList<Drawable> activeLayer;
-    private LinkedList<ConstructionLine> constructionLayer;
+    private final LinkedList<Drawable> activeLayer;
+    private final LinkedList<ConstructionLine> constructionLayer;
     private final Set<Selectable> selected = new LinkedHashSet<>();
 
     private SelectionBox selectionBox;

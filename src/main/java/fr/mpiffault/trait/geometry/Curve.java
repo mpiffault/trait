@@ -1,13 +1,10 @@
 package fr.mpiffault.trait.geometry;
 
-import java.awt.*;
-import java.util.ArrayList;
-
-import fr.mpiffault.trait.Utils;
 import fr.mpiffault.trait.dessin.Drawable;
-import fr.mpiffault.trait.dessin.Table;
 import fr.mpiffault.trait.geometry.utils.PointUtils;
 import lombok.Setter;
+
+import java.awt.*;
 
 import static fr.mpiffault.trait.Utils.isDebugMode;
 
@@ -16,22 +13,12 @@ public class Curve implements Drawable {
     @Setter
     private Vertex origin;
 
-    private int roundness;
-
     public Curve (Point origin) {
         this.origin = new Vertex(origin);
     }
 
     public void addPoint(Point point) {
         origin.addToQueue(point);
-    }
-
-    private boolean isFirstPoint(Point p) {
-        return p == origin.getSelf();
-    }
-
-    private boolean isLastPoint(Point p) {
-        return p == origin.getLast().getSelf();
     }
 
     @Override

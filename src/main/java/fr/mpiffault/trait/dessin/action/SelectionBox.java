@@ -1,8 +1,8 @@
 package fr.mpiffault.trait.dessin.action;
 
+import fr.mpiffault.trait.dessin.Drawable;
 import fr.mpiffault.trait.dessin.Table;
 import fr.mpiffault.trait.geometry.Point;
-import fr.mpiffault.trait.dessin.Drawable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class SelectionBox implements Drawable{
-    private Point startPoint;
+    private final Point startPoint;
     @Getter
     @Setter
     private Point endPoint;
