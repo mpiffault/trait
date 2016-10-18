@@ -1,5 +1,6 @@
 package fr.mpiffault.trait.dessin;
 
+import fr.mpiffault.trait.Utils;
 import fr.mpiffault.trait.dessin.action.SelectionBox;
 import fr.mpiffault.trait.dessin.action.TracingSegment;
 import fr.mpiffault.trait.geometry.*;
@@ -42,6 +43,8 @@ public class Table extends JPanel {
     private List<Intersectable> nearestIntersectableList;
     private Intersectable nearestIntersectable;
     private ArrayList<Point> nearestSnapPointList = new ArrayList<>();
+
+    @Getter
     private Point nearestSnapPoint;
 
     private Curve tracingCurve;
@@ -317,13 +320,15 @@ public class Table extends JPanel {
         }
     }
 
+    // FIXME
     public void updateNearestIntersection() {
         this.nearestSnapPointList = seakAllIntersectionPoints();
         if (!this.nearestSnapPointList.isEmpty()) {
             orderIntersectionPoints();
             Point localIntersection = this.nearestSnapPointList.get(0);
-            if (localIntersection.distanceSq(this.cursorPosition) < 5) {
+            if (localIntersection.distanceSq(this.cursorPosition) < 200) {
                 this.nearestSnapPoint = localIntersection;
+                if (Utils.isDebugMode()) System.out.println("Found nearest point !");
             } else {
                 this.nearestSnapPoint = null;
             }
@@ -341,6 +346,7 @@ public class Table extends JPanel {
         }
     }
 
+    // FIXME
     private ArrayList<Point> seakAllIntersectionPoints() {
         ArrayList<Point> intersectionPointsList = new ArrayList<>();
         for (Intersectable intersectable : this.nearestIntersectableList) {
@@ -349,7 +355,7 @@ public class Table extends JPanel {
                 for (Intersectable s2 : subList) {
                     Point[] intersections = intersectable.getIntersection(s2);
                     if(intersections != null){
-                        this.nearestSnapPointList.addAll(Arrays.asList(intersections));
+                        intersectionPointsList.addAll(Arrays.asList(intersections));
                     }
                 }
             }
