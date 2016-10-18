@@ -34,7 +34,7 @@ public class Table extends JPanel {
     private Point cursorPosition = new Point(0D,0D);
 
     private final LinkedList<Drawable> activeLayer;
-    private final LinkedList<ConstructionLine> constructionLayer;
+    private LinkedList<ConstructionLine> constructionLayer;
     private final Set<Selectable> selected = new LinkedHashSet<>();
 
     private SelectionBox selectionBox;
@@ -364,13 +364,7 @@ public class Table extends JPanel {
     }
 
     public void clearConstructionLines() {
-        Iterator<Drawable> it = this.activeLayer.descendingIterator();
-        while (it.hasNext()) {
-            Drawable d = it.next();
-            if (d instanceof ConstructionLine) {
-                it.remove();
-            }
-        }
+        this.constructionLayer = new LinkedList<>();
     }
 
     public boolean ongoingCurve() {
