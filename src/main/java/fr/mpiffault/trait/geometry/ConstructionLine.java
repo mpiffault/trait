@@ -79,7 +79,7 @@ public class ConstructionLine extends AbstractLine implements Drawable {
 
     @Override
     public void drawNearest(Graphics2D g2) {
-        g2.setColor(Table.FOREGROUND);
+        g2.setColor(Table.NEAREST);
         final float dash[] = {7.0f};
         BasicStroke basicStroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
         g2.setStroke(basicStroke);

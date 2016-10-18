@@ -88,10 +88,11 @@ public class Table extends JPanel {
             } else {
                 drawable.draw(g2);
             }
-            if (drawable instanceof Intersectable && this.nearestIntersectableList.contains(drawable)) {
-                drawable.drawHightlighted(g2);
-            }
         }
+
+        nearestIntersectableList.stream().filter(intersectable -> intersectable instanceof Drawable)
+        .forEach(intersectable -> ((Drawable)intersectable).drawHightlighted(g2));
+
         if (this.nearestIntersectable != null) {
             this.nearestIntersectable.drawNearest(g2);
         }
@@ -300,6 +301,13 @@ public class Table extends JPanel {
                 .filter(drawable -> drawable instanceof Intersectable)
                 .map(drawable -> (Intersectable) drawable)
                 .collect(Collectors.toList());
+
+        List<Intersectable> intersectableConstructionList = this.constructionLayer.stream()
+                .filter(drawable -> drawable != null)
+                .map(drawable -> (Intersectable) drawable)
+                .collect(Collectors.toList());
+
+        intersectableList.addAll(intersectableConstructionList);
 
         intersectableList.sort((i1, i2) -> Double.compare(i1.ptDist(cursorPosition), i2.ptDist(cursorPosition)));
 

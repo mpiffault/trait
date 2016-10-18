@@ -3,10 +3,13 @@ package fr.mpiffault.trait.geometry;
 import java.awt.*;
 import java.util.ArrayList;
 
+import fr.mpiffault.trait.Utils;
 import fr.mpiffault.trait.dessin.Drawable;
 import fr.mpiffault.trait.dessin.Table;
 import fr.mpiffault.trait.geometry.utils.PointUtils;
 import lombok.Setter;
+
+import static fr.mpiffault.trait.Utils.isDebugMode;
 
 public class Curve implements Drawable {
 
@@ -44,7 +47,7 @@ public class Curve implements Drawable {
                 Point ctrl2 = PointUtils.homotheticRotatePointFromOrigin(v2.getBissectPoint(), v2.getSelf(), Math.PI / 2, distance / Math.PI);
                 new SimpleBezier(v1.getSelf(), ctrl1, v2.getSelf(), ctrl2).draw(g2);
 
-                if ("true".equals(System.getProperty("GRAPH_DEBUG"))) {
+                if (isDebugMode()) {
                     v1.getSelf().draw(g2);
                     ctrl1.draw(g2, Color.CYAN);
                     ctrl2.draw(g2, Color.YELLOW);

@@ -1,5 +1,6 @@
 package fr.mpiffault.trait.dessin;
 
+import fr.mpiffault.trait.Utils;
 import fr.mpiffault.trait.geometry.AbstractLine;
 import fr.mpiffault.trait.geometry.Point;
 
@@ -42,6 +43,9 @@ public class MouseHandler extends MouseInputAdapter{
 
     private void leftClickActions(MouseEvent e) {
         Point point = new Point(e.getX(), e.getY());
+        if(Utils.isDebugMode()) {
+            System.out.println("Caught leftClick at " + point);
+        }
         table.setCursorPosition(point);
         switch (table.getCurrentModeEnum()) {
             case SELECTION:
@@ -150,22 +154,20 @@ public class MouseHandler extends MouseInputAdapter{
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        boolean mod = false;
+        boolean modified = false;
         Point point = new Point(e.getX(), e.getY());
         table.setCursorPosition(point);
         switch (table.getCurrentModeEnum()) {
             case SELECTION:
                 if (table.ongoingSelectionBox()) {
                     table.endSelectionBox(e.isShiftDown());
-                    mod = true;
+                    modified = true;
                 }
-                break;
-            case SEGMENT:
                 break;
             default:
                 break;
         }
-        if (mod) {
+        if (modified) {
             table.repaint();
         }
     }
