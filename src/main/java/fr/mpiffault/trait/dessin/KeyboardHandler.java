@@ -26,7 +26,7 @@ public class KeyboardHandler extends KeyAdapter {
     }
 
     private void switchMode(KeyEvent keyEvent) {
-        ModeEnum newModeEnum = ModeEnum.fromEventAndMode(keyEvent.getKeyCode(), table.getCurrentModeEnum());
+        ModeEnum newModeEnum = ModeEnum.fromKeyEventAndMode(keyEvent.getKeyCode(), table.getCurrentMode());
         this.table.setCurrentMode(newModeEnum);
     }
 
@@ -41,5 +41,6 @@ public class KeyboardHandler extends KeyAdapter {
             default:
                 break;
         }
+        this.table.repaint();
     }
 }

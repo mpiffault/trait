@@ -18,8 +18,10 @@ public enum ModeEnum {
     CONSTRUCTION("CONSTRUCTION", KeyEvent.VK_C, null),
     CONSTRUCTION_H("CONSTRUCTION HORIZONTAL", KeyEvent.VK_H, CONSTRUCTION),
     CONSTRUCTION_V("CONSTRUCTION VERTICAL", KeyEvent.VK_V, CONSTRUCTION),
+    // TODO : calculate the 2 parallels, and keep the nearest from the cursor
+    CONSTRUCTION_P("CONSTRUCTION PARALLEL", KeyEvent.VK_P, CONSTRUCTION),
     CONSTRUCTION_A("CONSTRUCTION ANGLE", KeyEvent.VK_A, CONSTRUCTION),
-    CONSTRUCTION_C("CONSTRUCTION CERCLE", KeyEvent.VK_C, CONSTRUCTION),
+    CONSTRUCTION_C("CONSTRUCTION CIRCLE", KeyEvent.VK_C, CONSTRUCTION),
 
     MESURE("MESURE", KeyEvent.VK_M, SELECTION);
 
@@ -35,7 +37,7 @@ public enum ModeEnum {
         this.parentModeEnum = requiredModeEnum;
     }
 
-    public static ModeEnum fromEventAndMode(int keyEvent, ModeEnum currentModeEnum) {
+    public static ModeEnum fromKeyEventAndMode(int keyEvent, ModeEnum currentModeEnum) {
         if (keyEvent == KeyEvent.VK_ESCAPE) {
             return currentModeEnum.getParentModeEnum();
         }
@@ -52,7 +54,7 @@ public enum ModeEnum {
                 && keyEvent == this.keyEvent;
     }
 
-    private ModeEnum getParentModeEnum() {
+    public ModeEnum getParentModeEnum() {
         if (this.parentModeEnum != null) {
             return this.parentModeEnum;
         } else {

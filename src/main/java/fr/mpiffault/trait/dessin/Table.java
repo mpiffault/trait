@@ -28,7 +28,7 @@ public class Table extends JPanel {
     private int width, height;
 
     @Getter
-    private ModeEnum currentModeEnum;
+    private ModeEnum currentMode;
 
     @Setter
     private Point cursorPosition = new Point(0D,0D);
@@ -54,7 +54,7 @@ public class Table extends JPanel {
         this.height = height;
         this.setBackground(BACKGROUND);
 
-        this.currentModeEnum = ModeEnum.SELECTION;
+        this.currentMode = ModeEnum.SELECTION;
 
         activeLayer = new LinkedList<>();
         constructionLayer = new LinkedList<>();
@@ -118,11 +118,11 @@ public class Table extends JPanel {
 
     private void paintModeLabel(Graphics2D g2) {
         g2.setColor(UI_TEXT);
-        g2.drawString(currentModeEnum.getName(), 20, 20);
+        g2.drawString(currentMode.getName(), 20, 20);
     }
 
     public void setCurrentMode(ModeEnum modeEnum) {
-        this.currentModeEnum = modeEnum;
+        this.currentMode = modeEnum;
     }
 
     public boolean ongoingAction() {
@@ -140,6 +140,7 @@ public class Table extends JPanel {
             activeLayer.removeAll(selected);
             this.selected.clear();
         }
+        updateNearestIntersectableList();
     }
 
     /* SELECTION */
@@ -317,6 +318,8 @@ public class Table extends JPanel {
         this.nearestIntersectableList = intersectableList.subList(0,Math.min(intersectableList.size(), 3));
         if (!nearestIntersectableList.isEmpty()) {
             this.nearestIntersectable = this.nearestIntersectableList.get(0);
+        } else {
+            this.nearestIntersectable = null;
         }
     }
 
@@ -365,6 +368,11 @@ public class Table extends JPanel {
 
     public void clearConstructionLines() {
         this.constructionLayer = new LinkedList<>();
+        updateNearestIntersectableList();
+    }
+
+    public void switchToParentMode() {
+        this.currentMode = this.currentMode.getParentModeEnum();
     }
 
     public boolean ongoingCurve() {
