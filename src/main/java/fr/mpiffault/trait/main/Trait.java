@@ -5,7 +5,9 @@ import fr.mpiffault.trait.dessin.MouseHandler;
 import fr.mpiffault.trait.dessin.Table;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 
@@ -42,8 +44,6 @@ public class Trait {
 
         JPanel tools = new JPanel();
         frame.add(tools, BorderLayout.EAST);
-
-
 
         frame.setSize(WIDTH + 1, HEIGHT + 38);
         frame.setVisible(true);

@@ -9,7 +9,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
@@ -50,6 +52,7 @@ public class Table extends JPanel {
     private Curve tracingCurve;
 
     public Table(int width, int height) {
+
         this.width = width;
         this.height = height;
         this.setBackground(BACKGROUND);
@@ -67,6 +70,8 @@ public class Table extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+        if(this.width != this.getParent().getWidth()) this.width = this.getParent().getWidth();
+        if(this.height != this.getParent().getHeight()) this.height = this.getParent().getHeight();
         super.paintComponent(g);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintDrawables(g2);
