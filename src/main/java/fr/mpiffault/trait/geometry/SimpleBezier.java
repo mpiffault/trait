@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.awt.*;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
 
 
 public class SimpleBezier implements Drawable, Selectable{
@@ -58,6 +59,12 @@ public class SimpleBezier implements Drawable, Selectable{
     @Override
     public void drawHightlighted(Graphics2D g2) {
 
+    }
+
+    @Override
+    public HashSet<Point> getPointSet() {
+        HashSet<Point> pointHashSet = new HashSet<>();
+        return pointHashSet;
     }
 
     @Override

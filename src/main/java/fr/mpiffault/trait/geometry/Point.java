@@ -7,6 +7,7 @@ import fr.mpiffault.trait.dessin.Table;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
 
 public class Point extends Point2D.Double implements Drawable, Selectable {
 
@@ -46,6 +47,13 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
         g2.setColor(Color.RED);
         this.drawPoint(g2);
         g2.setStroke(new BasicStroke());
+    }
+
+    @Override
+    public HashSet<Point> getPointSet() {
+        HashSet<Point> hashSet = new HashSet<>();
+        hashSet.add(this);
+        return hashSet;
     }
 
     @Override

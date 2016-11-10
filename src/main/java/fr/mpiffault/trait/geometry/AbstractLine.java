@@ -61,4 +61,12 @@ public abstract class AbstractLine extends Line2D.Double implements Intersectabl
     private Point getIntersectionPoint(Point thisMiddlePoint, double thisCoeff) {
         return new Point(this.x1 + (thisCoeff * thisMiddlePoint.getX()), this.y1 + (thisCoeff * thisMiddlePoint.getY()));
     }
+
+    public Point getP1() {
+        return new Point(super.x1, super.y1);
+    }
+
+    public Point getP2() {
+        return new Point(super.x2, super.y2);
+    }
 }

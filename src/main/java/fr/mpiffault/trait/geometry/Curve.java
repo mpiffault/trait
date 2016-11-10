@@ -5,6 +5,7 @@ import fr.mpiffault.trait.geometry.utils.PointUtils;
 import lombok.Setter;
 
 import java.awt.*;
+import java.util.HashSet;
 
 import static fr.mpiffault.trait.Utils.isDebugMode;
 
@@ -50,5 +51,11 @@ public class Curve implements Drawable {
     @Override
     public void drawHightlighted(Graphics2D g2) {
 
+    }
+
+    @Override
+    public HashSet<Point> getPointSet() {
+        HashSet<Point> pointHashSet = new HashSet<Point>();
+        return pointHashSet;
     }
 }

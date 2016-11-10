@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
 
 public class SelectionBox implements Drawable{
     private final Point startPoint;
@@ -29,6 +30,12 @@ public class SelectionBox implements Drawable{
     @Override
     public void drawHightlighted(Graphics2D g2) {
 
+    }
+
+    @Override
+    public HashSet<Point> getPointSet() {
+        HashSet<Point> pointHashSet = new HashSet<>();
+        return pointHashSet;
     }
 
     public Rectangle2D getRectangle2D() {

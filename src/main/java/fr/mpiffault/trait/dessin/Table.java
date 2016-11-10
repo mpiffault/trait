@@ -255,7 +255,7 @@ public class Table extends JPanel {
     /* CONSTRUCTION */
 
     public void initConstructionLineTrace() {
-        constructionLine = new ConstructionLine(this.cursorPosition, this.cursorPosition, this);
+        constructionLine = new ConstructionLine(getClicPoint(), getClicPoint(), this);
     }
 
     public void updateTracingConstructionLine() {
@@ -270,16 +270,15 @@ public class Table extends JPanel {
 
     public void endConstructionLine() {
         if (constructionLine != null) {
-            //constructionLine = new ConstructionLine(constructionLine.getFirstPoint(), this.cursorPosition, this);
-            constructionLine.setSecondPoint(this.cursorPosition);
+            constructionLine.setSecondPoint(getClicPoint());
         }
         constructionLayer.add(constructionLine);
         constructionLine = null;
     }
 
     public void traceHorizontalLine() {
-        constructionLine = new ConstructionLine(this.cursorPosition,
-                new Point(this.cursorPosition.getX() + 1, this.cursorPosition.getY()), this);
+        constructionLine = new ConstructionLine(getClicPoint(),
+                new Point(getClicPoint().getX() + 1, getClicPoint().getY()), this);
         constructionLayer.add(constructionLine);
         constructionLine = null;
     }
@@ -289,8 +288,8 @@ public class Table extends JPanel {
     }
 
     public void traceVerticalLine() {
-        constructionLine = new ConstructionLine(this.cursorPosition,
-                new Point(this.cursorPosition.getX(), this.cursorPosition.getY() + 1), this);
+        constructionLine = new ConstructionLine(getClicPoint(),
+                new Point(getClicPoint().getX(), getClicPoint().getY() + 1), this);
         constructionLayer.add(constructionLine);
         constructionLine = null;
     }
@@ -331,6 +330,7 @@ public class Table extends JPanel {
     // FIXME
     public void updateNearestIntersection() {
         this.nearestSnapPointList = seakAllIntersectionPoints();
+        this.nearestSnapPointList.addAll(seakAllDrawablesPoints());
         if (!this.nearestSnapPointList.isEmpty()) {
             orderIntersectionPoints();
             Point localIntersection = this.nearestSnapPointList.get(0);
@@ -341,6 +341,14 @@ public class Table extends JPanel {
                 this.nearestSnapPoint = null;
             }
         }
+    }
+
+    private Collection<? extends Point> seakAllDrawablesPoints() {
+        HashSet<Point> pointHashSet = new HashSet<>();
+        for (Drawable d : this.activeLayer) {
+            pointHashSet.addAll(d.getPointSet());
+        }
+        return pointHashSet;
     }
 
     private void orderIntersectionPoints() {
@@ -386,14 +394,14 @@ public class Table extends JPanel {
 
     public void initCurveTrace() {
         if (!ongoingCurve()) {
-            tracingCurve = new Curve(this.cursorPosition);
+            tracingCurve = new Curve(getClicPoint());
             System.out.println("Init curve at : " + this.cursorPosition);
         }
     }
 
     public void addCurvePoint() {
         if (ongoingCurve()) {
-            tracingCurve.addPoint(this.cursorPosition);
+            tracingCurve.addPoint(getClicPoint());
             System.out.println("Added point : " + this.cursorPosition);
         }
     }

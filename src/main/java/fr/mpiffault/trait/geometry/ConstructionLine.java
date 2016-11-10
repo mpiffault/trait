@@ -5,6 +5,7 @@ import fr.mpiffault.trait.dessin.Table;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.util.HashSet;
 
 public class ConstructionLine extends AbstractLine implements Drawable {
     private double coefficient;
@@ -101,6 +102,12 @@ public class ConstructionLine extends AbstractLine implements Drawable {
 
         g2.draw(line);
         g2.setStroke(new BasicStroke());
+    }
+
+    @Override
+    public HashSet<Point> getPointSet() {
+        HashSet<Point> pointHashSet = new HashSet<Point>();
+        return pointHashSet;
     }
 
     @Override

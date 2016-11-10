@@ -6,6 +6,7 @@ import fr.mpiffault.trait.dessin.Table;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
 
 public class Segment extends AbstractLine implements Drawable, Selectable {
 
@@ -41,6 +42,14 @@ public class Segment extends AbstractLine implements Drawable, Selectable {
         g2.setColor(Table.HIGHTLIGHTED);
         g2.draw(this);
         g2.setStroke(new BasicStroke());
+    }
+
+    @Override
+    public HashSet<Point> getPointSet() {
+        HashSet<Point> pointsHashSet = new HashSet<>();
+        pointsHashSet.add(getP1());
+        pointsHashSet.add(getP2());
+        return pointsHashSet;
     }
 
     @Override

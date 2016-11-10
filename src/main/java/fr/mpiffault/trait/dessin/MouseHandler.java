@@ -38,12 +38,7 @@ public class MouseHandler extends MouseInputAdapter{
     }
 
     private void leftClickActions(MouseEvent e) {
-        Point point;
-        if (this.table.getNearestSnapPoint() != null) {
-            point = this.table.getNearestSnapPoint();
-        } else {
-            point = new Point(e.getX(), e.getY());
-        }
+        Point point = new Point(e.getX(), e.getY());
         if(Utils.isDebugMode()) {
             System.out.println("Caught leftClick at " + point);
         }
