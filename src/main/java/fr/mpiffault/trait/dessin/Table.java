@@ -9,13 +9,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static fr.mpiffault.trait.Utils.isDebugMode;
 
 public class Table extends JPanel {
 
@@ -50,6 +50,10 @@ public class Table extends JPanel {
     private Point nearestSnapPoint;
 
     private Curve tracingCurve;
+
+    @Getter
+    @Setter
+    private boolean ongoingClick;
 
     public Table(int width, int height) {
 
@@ -131,13 +135,14 @@ public class Table extends JPanel {
     }
 
     public boolean ongoingAction() {
-        return ongoingSelectionBox() || ongoingSegment() || ongoingConstructionLine();
+        return ongoingSelectionBox() || ongoingSegment() || ongoingConstructionLine() || this.ongoingClick;
     }
 
     public void cancelCurrentAction() {
         this.selectionBox = null;
         this.tracingSegment = null;
         this.constructionLine = null;
+        this.ongoingClick = false;
     }
 
     public void deleteSelectedObjects() {
@@ -230,6 +235,9 @@ public class Table extends JPanel {
     public void initSegmentTrace() {
         Point initPoint = getClicPoint();
         this.tracingSegment = new TracingSegment(initPoint);
+        if (isDebugMode()) {
+            System.out.println("initSegment");
+        }
     }
 
     private Point getClicPoint() {
@@ -250,6 +258,9 @@ public class Table extends JPanel {
         Segment newSegment = this.tracingSegment;
         activeLayer.add(newSegment);
         this.tracingSegment = null;
+        if (isDebugMode()) {
+            System.out.println("endSegment");
+        }
     }
 
     /* CONSTRUCTION */
@@ -336,7 +347,6 @@ public class Table extends JPanel {
             Point localIntersection = this.nearestSnapPointList.get(0);
             if (localIntersection.distanceSq(this.cursorPosition) < 200) {
                 this.nearestSnapPoint = localIntersection;
-                if (Utils.isDebugMode()) System.out.println("Found nearest point !");
             } else {
                 this.nearestSnapPoint = null;
             }

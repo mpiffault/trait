@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.HashSet;
 
+import static java.lang.Math.*;
+import static java.lang.Math.PI;
+
 public class ConstructionLine extends AbstractLine implements Drawable {
     private double coefficient;
     private double shift;
@@ -18,6 +21,21 @@ public class ConstructionLine extends AbstractLine implements Drawable {
         super(firstPoint, secondPoint);
         this.table = table;
         calculateCoefficients();
+    }
+
+    public ConstructionLine(double coefficient, double shift, Table table) {
+        super(calculateFirstPoint(coefficient, shift), calculateSecondPoint(coefficient, shift));
+        this.coefficient = coefficient;
+        this.shift = shift;
+        this.table = table;
+    }
+
+    private static Point calculateFirstPoint(double coefficient, double shift) {
+        return new Point(0,shift);
+    }
+
+    private static Point calculateSecondPoint(double coefficient, double shift) {
+        return new Point(1,coefficient + shift);
     }
 
     public void setSecondPoint(Point point) {
@@ -78,6 +96,32 @@ public class ConstructionLine extends AbstractLine implements Drawable {
         line = new Double(pa,pb);
     }
 
+    private double getPerpendicularAngle() {
+        if (!this.vertical) {
+            double lineAngle = atan(-coefficient);
+            return lineAngle - (PI / 2);
+        }
+        return 0;
+    }
+
+    public ConstructionLine parallelByDistanceOver(double distance) {
+        double perpendicularAngle = getPerpendicularAngle();
+
+        double dY = Math.sqrt(1.0D + Math.pow(tan(perpendicularAngle), 2.0D)) * distance;
+
+        System.out.println("Main line coeff: " + (-this.coefficient) + " -> Angle: " + toDegrees(atan(-coefficient))
+                + "\nPerpendicular angle: " + toDegrees(perpendicularAngle)
+                + "\ndY: " + dY + " -> Shift = " + this.shift + " + " + dY + " = " + (this.shift + dY));
+        return new ConstructionLine(this.coefficient, (this.shift + dY), this.table);
+    }
+
+    public ConstructionLine parallelByDistanceUnder(double distance) {
+        double perpendicularAngle = getPerpendicularAngle();
+        double dX = cos(perpendicularAngle) * distance;
+        double dY = sin(perpendicularAngle) * distance;
+        return new ConstructionLine(this.coefficient, this.shift - dY, this.table);
+    }
+
     @Override
     public void drawNearest(Graphics2D g2) {
         g2.setColor(Table.NEAREST);
@@ -89,6 +133,9 @@ public class ConstructionLine extends AbstractLine implements Drawable {
 
         g2.draw(line);
         g2.setStroke(new BasicStroke());
+
+        this.parallelByDistanceOver(10.0).draw(g2);
+        //this.parallelByDistanceUnder(10.0).draw(g2);
     }
 
     @Override
