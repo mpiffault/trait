@@ -109,9 +109,11 @@ public class ConstructionLine extends AbstractLine implements Drawable {
 
         double dY = Math.sqrt(1.0D + Math.pow(tan(perpendicularAngle), 2.0D)) * distance;
 
-        System.out.println("Main line coeff: " + (-this.coefficient) + " -> Angle: " + toDegrees(atan(-coefficient))
-                + "\nPerpendicular angle: " + toDegrees(perpendicularAngle)
-                + "\ndY: " + dY + " -> Shift = " + this.shift + " + " + dY + " = " + (this.shift + dY));
+        if (table.isLogCoeff()) {
+            System.out.println("Main line coeff: " + (-this.coefficient) + " -> Angle: " + toDegrees(atan(-coefficient))
+                    + "\nPerpendicular angle: " + toDegrees(perpendicularAngle)
+                    + "\ndY: " + dY + " -> Shift = " + this.shift + " + " + dY + " = " + (this.shift + dY));
+        }
         return new ConstructionLine(this.coefficient, (this.shift + dY), this.table);
     }
 

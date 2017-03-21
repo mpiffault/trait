@@ -75,4 +75,8 @@ public class Segment extends AbstractLine implements Drawable, Selectable {
     public double ptDist(Point cursorPosition) {
         return this.ptSegDist(cursorPosition);
     }
+
+    public double getLength() {
+        return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+    }
 }

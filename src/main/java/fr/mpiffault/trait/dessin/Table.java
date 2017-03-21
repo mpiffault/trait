@@ -55,6 +55,9 @@ public class Table extends JPanel {
     @Setter
     private boolean ongoingClick;
 
+    private boolean logLength = false;
+    private boolean logCoeff = false;
+
     public Table(int width, int height) {
 
         this.width = width;
@@ -251,6 +254,9 @@ public class Table extends JPanel {
     public void updateTracingSegment() {
         if (ongoingSegment()) {
             this.tracingSegment.setEndPoint(getClicPoint());
+            if (isLogLength()) {
+                System.out.println("Length : " + tracingSegment.getLength());
+            }
         }
     }
 
@@ -414,5 +420,21 @@ public class Table extends JPanel {
             tracingCurve.addPoint(getClicPoint());
             System.out.println("Added point : " + this.cursorPosition);
         }
+    }
+
+    public void toggleLengthLog() {
+        logLength = !logLength;
+    }
+
+    public void toggleCoeffLog() {
+        logCoeff = !logCoeff;
+    }
+
+    public boolean isLogLength() {
+        return logLength;
+    }
+
+    public boolean isLogCoeff() {
+        return logCoeff;
     }
 }

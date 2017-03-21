@@ -38,6 +38,12 @@ public class KeyboardHandler extends KeyAdapter {
             case KeyEvent.VK_X:
                 table.clearConstructionLines();
                 break;
+            case KeyEvent.VK_L:
+                table.toggleLengthLog();
+                break;
+            case KeyEvent.VK_M:
+                table.toggleCoeffLog();
+                break;
             default:
                 break;
         }
