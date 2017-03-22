@@ -107,7 +107,8 @@ public class ConstructionLine extends AbstractLine implements Drawable {
     public ConstructionLine parallelByDistanceOver(double distance) {
         double perpendicularAngle = getPerpendicularAngle();
 
-        double dY = Math.sqrt(1.0D + Math.pow(tan(perpendicularAngle), 2.0D)) * distance;
+        // double dY = Math.sqrt(1.0D + Math.pow(tan(perpendicularAngle), 2.0D)) * distance;
+        double dY = 1 / (Math.cos(-(PI / 2.0) - perpendicularAngle)) * distance;
 
         if (table.isLogCoeff()) {
             System.out.println("Main line coeff: " + (-this.coefficient) + " -> Angle: " + toDegrees(atan(-coefficient))
@@ -136,7 +137,7 @@ public class ConstructionLine extends AbstractLine implements Drawable {
         g2.draw(line);
         g2.setStroke(new BasicStroke());
 
-        this.parallelByDistanceOver(10.0).draw(g2);
+        this.parallelByDistanceOver(1000.0).draw(g2);
         //this.parallelByDistanceUnder(10.0).draw(g2);
     }
 
