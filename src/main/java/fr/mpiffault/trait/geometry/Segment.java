@@ -21,6 +21,11 @@ public class Segment extends AbstractLine implements Drawable, Selectable {
     }
 
     @Override
+    public void drawTemporary(Graphics2D g2) {
+
+    }
+
+    @Override
     public void drawSelected(Graphics2D g2) {
         g2.setColor(Table.SELECTED);
         g2.draw(this);
@@ -28,7 +33,7 @@ public class Segment extends AbstractLine implements Drawable, Selectable {
 
     @Override
     public void drawNearest(Graphics2D g2) {
-        BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
+        BasicStroke basicStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
         g2.setStroke(basicStroke);
         g2.setColor(Table.NEAREST);
         g2.draw(this);
@@ -37,11 +42,11 @@ public class Segment extends AbstractLine implements Drawable, Selectable {
 
     @Override
     public void drawHightlighted(Graphics2D g2) {
-        BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
-        g2.setStroke(basicStroke);
-        g2.setColor(Table.HIGHTLIGHTED);
-        g2.draw(this);
-        g2.setStroke(new BasicStroke());
+//        BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
+//        g2.setStroke(basicStroke);
+//        g2.setColor(Table.HIGHTLIGHTED);
+//        g2.draw(this);
+//        g2.setStroke(new BasicStroke());
     }
 
     @Override

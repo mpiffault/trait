@@ -35,6 +35,11 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
         this.drawPoint(g2);
     }
 
+    @Override
+    public void drawTemporary(Graphics2D g2) {
+
+    }
+
     public void draw(Graphics2D g2, Color color) {
         g2.setColor(color);
         this.drawPoint(g2);

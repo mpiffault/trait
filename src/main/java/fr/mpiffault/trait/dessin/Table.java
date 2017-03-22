@@ -17,13 +17,15 @@ import java.util.stream.Collectors;
 
 import static fr.mpiffault.trait.Utils.isDebugMode;
 
+@SuppressWarnings("WeakerAccess")
 public class Table extends JPanel {
 
     public static final Color BACKGROUND = Color.DARK_GRAY;
     public static final Color FOREGROUND = Color.WHITE;
     public static final Color SELECTED = Color.MAGENTA;
     public static final Color HIGHTLIGHTED = Color.GREEN;
-    public static final Color NEAREST = Color.BLUE;
+    public static final Color NEAREST = Color.LIGHT_GRAY;
+    public static final Color TEMPORARY = Color.GRAY;
     public static final Color UI_TEXT = Color.RED;
 
     @Getter
@@ -33,6 +35,7 @@ public class Table extends JPanel {
     private ModeEnum currentMode;
 
     @Setter
+    @Getter
     private Point cursorPosition = new Point(0D,0D);
 
     private final LinkedList<Drawable> activeLayer;
@@ -57,6 +60,8 @@ public class Table extends JPanel {
 
     private boolean logLength = false;
     private boolean logCoeff = false;
+
+    private double currentValue = 1;
 
     public Table(int width, int height) {
 
@@ -83,6 +88,7 @@ public class Table extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintDrawables(g2);
         paintModeLabel(g2);
+        paintInfos(g2);
         paintCursor(g2);
     }
 
@@ -131,6 +137,11 @@ public class Table extends JPanel {
     private void paintModeLabel(Graphics2D g2) {
         g2.setColor(UI_TEXT);
         g2.drawString(currentMode.getName(), 20, 20);
+    }
+
+    private void paintInfos(Graphics2D g2) {
+        g2.setColor(UI_TEXT);
+        g2.drawString("Current value : " + currentValue, 20, this.height - 40);
     }
 
     public void setCurrentMode(ModeEnum modeEnum) {
@@ -328,13 +339,13 @@ public class Table extends JPanel {
                 .collect(Collectors.toList());
 
         List<Intersectable> intersectableConstructionList = this.constructionLayer.stream()
-                .filter(drawable -> drawable != null)
+                .filter(Objects::nonNull)
                 .map(drawable -> (Intersectable) drawable)
                 .collect(Collectors.toList());
 
         intersectableList.addAll(intersectableConstructionList);
 
-        intersectableList.sort((i1, i2) -> Double.compare(i1.ptDist(cursorPosition), i2.ptDist(cursorPosition)));
+        intersectableList.sort(Comparator.comparingDouble(i -> i.ptDist(cursorPosition)));
 
         this.nearestIntersectableList = intersectableList.subList(0,Math.min(intersectableList.size(), 3));
         if (!nearestIntersectableList.isEmpty()) {
@@ -344,7 +355,6 @@ public class Table extends JPanel {
         }
     }
 
-    // FIXME
     public void updateNearestIntersection() {
         this.nearestSnapPointList = seakAllIntersectionPoints();
         this.nearestSnapPointList.addAll(seakAllDrawablesPoints());
@@ -426,15 +436,15 @@ public class Table extends JPanel {
         logLength = !logLength;
     }
 
-    public void toggleCoeffLog() {
-        logCoeff = !logCoeff;
-    }
-
     public boolean isLogLength() {
         return logLength;
     }
 
-    public boolean isLogCoeff() {
-        return logCoeff;
+    public double getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(double currentValue) {
+        this.currentValue = currentValue;
     }
 }

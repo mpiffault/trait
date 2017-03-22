@@ -50,50 +50,6 @@ public class MouseHandler extends MouseInputAdapter{
             case SELECTION:
                 table.selectObjectAt(point, e.isShiftDown());
                 break;
-            /*case POINT:
-                table.createPoint();
-                break;
-            case SEGMENT:
-                if (!table.ongoingSegment()) {
-                    table.initSegmentTrace();
-                } else {
-                    table.endSegment();
-                }
-                break;
-            case CURVE:
-                if (!table.ongoingCurve()) {
-                    table.initCurveTrace();
-                } else {
-                    table.addCurvePoint();
-                }
-                break;
-            case CONSTRUCTION:
-                if (!table.ongoingConstructionLine()) {
-                    table.initConstructionLineTrace();
-                } else {
-                    table.endConstructionLine();
-                }
-                break;
-            case CONSTRUCTION_H:
-                if (!table.ongoingConstructionLine()) {
-                    table.traceHorizontalLine();
-                } else {
-                    table.endHorizontalLine();
-                }
-                break;
-            case CONSTRUCTION_V:
-                if (!table.ongoingConstructionLine()) {
-                    table.traceVerticalLine();
-                } else {
-                    table.endVerticalLine();
-                }
-                break;
-            case CONSTRUCTION_A:
-                if (table.ongoingConstructionLine()) {
-                    table.cancelCurrentAction();
-                }
-                table.traceAngleLine();
-                break;*/
             default:
                 break;
         }
@@ -145,7 +101,9 @@ public class MouseHandler extends MouseInputAdapter{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        table.setOngoingClick(true);
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            table.setOngoingClick(true);
+        }
         switch (table.getCurrentMode()) {
             default:
                 break;

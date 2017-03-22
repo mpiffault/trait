@@ -58,6 +58,16 @@ public class ConstructionLine extends AbstractLine implements Drawable {
     @Override
     public void draw(Graphics2D g2) {
         g2.setColor(Table.FOREGROUND);
+        drawInternal(g2);
+    }
+
+    @Override
+    public void drawTemporary(Graphics2D g2) {
+        g2.setColor(Table.TEMPORARY);
+        drawInternal(g2);
+    }
+
+    private void drawInternal(Graphics2D g2) {
         final float dash[] = {7.0f};
         BasicStroke basicStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
         g2.setStroke(basicStroke);
@@ -105,59 +115,59 @@ public class ConstructionLine extends AbstractLine implements Drawable {
     }
 
     public ConstructionLine parallelByDistanceOver(double distance) {
-        double perpendicularAngle = getPerpendicularAngle();
-
-        // double dY = Math.sqrt(1.0D + Math.pow(tan(perpendicularAngle), 2.0D)) * distance;
-        double dY = 1 / (Math.cos(-(PI / 2.0) - perpendicularAngle)) * distance;
-
-        if (table.isLogCoeff()) {
-            System.out.println("Main line coeff: " + (-this.coefficient) + " -> Angle: " + toDegrees(atan(-coefficient))
-                    + "\nPerpendicular angle: " + toDegrees(perpendicularAngle)
-                    + "\ndY: " + dY + " -> Shift = " + this.shift + " + " + dY + " = " + (this.shift + dY));
+        if (!vertical) {
+            double perpendicularAngle = getPerpendicularAngle();
+            double dY = 1 / (Math.cos(-(PI / 2.0) - perpendicularAngle)) * distance;
+            return new ConstructionLine(this.coefficient, (this.shift + dY), this.table);
         }
-        return new ConstructionLine(this.coefficient, (this.shift + dY), this.table);
+        double x = this.x1 - distance;
+        return new ConstructionLine(new Point(x, 0), new Point(x, 1), table);
     }
 
     public ConstructionLine parallelByDistanceUnder(double distance) {
-        double perpendicularAngle = getPerpendicularAngle();
-        double dX = cos(perpendicularAngle) * distance;
-        double dY = sin(perpendicularAngle) * distance;
-        return new ConstructionLine(this.coefficient, this.shift - dY, this.table);
+        if (!vertical) {
+            double perpendicularAngle = getPerpendicularAngle();
+            double dY = 1 / (Math.cos(-(PI / 2.0) - perpendicularAngle)) * distance;
+            return new ConstructionLine(this.coefficient, this.shift - dY, this.table);
+        }
+        double x = this.x1 + distance;
+        return new ConstructionLine(new Point(x, 0), new Point(x, 1), table);
     }
 
     @Override
     public void drawNearest(Graphics2D g2) {
         g2.setColor(Table.NEAREST);
-        final float dash[] = {7.0f};
-        BasicStroke basicStroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
-        g2.setStroke(basicStroke);
+        drawInternal(g2);
 
-        calculateLineToDraw();
+        Point cursor = table.getCursorPosition();
 
-        g2.draw(line);
-        g2.setStroke(new BasicStroke());
+        if (isCursorOver(cursor, line)) {
+            this.parallelByDistanceOver(table.getCurrentValue()).drawTemporary(g2);
+        } else {
+            this.parallelByDistanceUnder(table.getCurrentValue()).drawTemporary(g2);
+        }
+    }
 
-        this.parallelByDistanceOver(1000.0).draw(g2);
-        //this.parallelByDistanceUnder(10.0).draw(g2);
+    private boolean isCursorOver(Point cursor, Double line) {
+        return (line.x2 - line.x1)*(cursor.y - line.y1) > (line.y2 - line.y1)*(cursor.x - line.x1);
     }
 
     @Override
     public void drawHightlighted(Graphics2D g2) {
-        final float dash[] = {7.0f};
-        BasicStroke basicStroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
-        g2.setStroke(basicStroke);
-        g2.setColor(Table.HIGHTLIGHTED);
-
-        calculateLineToDraw();
-
-        g2.draw(line);
-        g2.setStroke(new BasicStroke());
+//        final float dash[] = {7.0f};
+//        BasicStroke basicStroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
+//        g2.setStroke(basicStroke);
+//        g2.setColor(Table.HIGHTLIGHTED);
+//
+//        calculateLineToDraw();
+//
+//        g2.draw(line);
+//        g2.setStroke(new BasicStroke());
     }
 
     @Override
     public HashSet<Point> getPointSet() {
-        HashSet<Point> pointHashSet = new HashSet<Point>();
-        return pointHashSet;
+        return new HashSet<>();
     }
 
     @Override

@@ -28,6 +28,11 @@ public class SelectionBox implements Drawable{
     }
 
     @Override
+    public void drawTemporary(Graphics2D g2) {
+
+    }
+
+    @Override
     public void drawHightlighted(Graphics2D g2) {
 
     }

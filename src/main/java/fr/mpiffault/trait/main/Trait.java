@@ -49,8 +49,9 @@ public class Trait {
         frame.setVisible(true);
 
         System.out.println("---\n<space> for SELECTION (default)\n" +
-                "'p' for POINT\n" +
-                "'s' for SEGMENT\n" +
-                "'c' for CONSTRUCTION");
+                "'p' : POINT\n" +
+                "'s' : SEGMENT\n" +
+                "'c' : CONSTRUCTION\n" +
+                "'x' : CLEAR CONSTRUCTION LINE");
     }
 }

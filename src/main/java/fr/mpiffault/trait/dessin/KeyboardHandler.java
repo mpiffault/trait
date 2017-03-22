@@ -3,9 +3,13 @@ package fr.mpiffault.trait.dessin;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import static java.awt.event.KeyEvent.*;
+
 public class KeyboardHandler extends KeyAdapter {
 
     private final Table table;
+
+    private boolean typingDigits = false;
 
     public KeyboardHandler(Table table) {
         super();
@@ -16,7 +20,7 @@ public class KeyboardHandler extends KeyAdapter {
     public void keyPressed(KeyEvent keyEvent) {
         super.keyPressed(keyEvent);
 
-        if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE && table.ongoingAction()) {
+        if (keyEvent.getKeyCode() == VK_ESCAPE && table.ongoingAction()) {
             table.cancelCurrentAction();
         } else {
             performSpecialActions(keyEvent);
@@ -32,21 +36,32 @@ public class KeyboardHandler extends KeyAdapter {
 
     private void performSpecialActions(KeyEvent keyEvent) {
         switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_DELETE:
+            case VK_DELETE:
                 this.table.deleteSelectedObjects();
                 break;
-            case KeyEvent.VK_X:
+            case VK_X:
                 table.clearConstructionLines();
                 break;
-            case KeyEvent.VK_L:
+            case VK_L:
                 table.toggleLengthLog();
-                break;
-            case KeyEvent.VK_M:
-                table.toggleCoeffLog();
                 break;
             default:
                 break;
         }
+        if (keyEvent.getKeyCode() >= VK_0 && keyEvent.getKeyCode() <= VK_9) {
+            if (typingDigits) {
+                table.setCurrentValue(table.getCurrentValue() * 10.0 + doubleFromDigit(keyEvent));
+            } else {
+                table.setCurrentValue(doubleFromDigit(keyEvent));
+            }
+            typingDigits = true;
+        } else if (keyEvent.getKeyCode() != VK_SHIFT){
+            typingDigits = false;
+        }
         this.table.repaint();
+    }
+
+    private double doubleFromDigit (KeyEvent keyEvent) {
+        return keyEvent.getKeyCode() - VK_0;
     }
 }
