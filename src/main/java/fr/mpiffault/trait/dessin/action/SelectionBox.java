@@ -43,6 +43,11 @@ public class SelectionBox implements Drawable{
         return pointHashSet;
     }
 
+    @Override
+    public void drawNearest(Graphics2D g2) {
+        // Irrelevant
+    }
+
     public Rectangle2D getRectangle2D() {
         double x = Math.min(startPoint.getX(), endPoint.getX());
         double y = Math.min(startPoint.getY(), endPoint.getY());

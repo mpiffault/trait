@@ -73,6 +73,11 @@ public class SimpleBezier implements Drawable, Selectable{
     }
 
     @Override
+    public void drawNearest(Graphics2D g2) {
+
+    }
+
+    @Override
     public boolean isSelectable(Point point) {
         return false;
     }

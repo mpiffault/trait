@@ -1,6 +1,7 @@
 package fr.mpiffault.trait.geometry;
 
 import fr.mpiffault.trait.dessin.Drawable;
+import fr.mpiffault.trait.dessin.ModeEnum;
 import fr.mpiffault.trait.dessin.Table;
 
 import java.awt.*;
@@ -139,13 +140,20 @@ public class ConstructionLine extends AbstractLine implements Drawable {
         g2.setColor(Table.NEAREST);
         drawInternal(g2);
 
-        Point cursor = table.getCursorPosition();
-
-        if (isCursorOver(cursor, line)) {
-            this.parallelByDistanceOver(table.getCurrentValue()).drawTemporary(g2);
-        } else {
-            this.parallelByDistanceUnder(table.getCurrentValue()).drawTemporary(g2);
+        if (table.getCurrentMode().equals(ModeEnum.CONSTRUCTION_P)) {
+            ConstructionLine temp = getParrallelLineByDistance();
+            temp.drawTemporary(g2);
         }
+    }
+
+    public ConstructionLine getParrallelLineByDistance() {
+        ConstructionLine temp;Point cursor = table.getCursorPosition();
+        if (isCursorOver(cursor, line)) {
+            temp = this.parallelByDistanceOver(table.getCurrentValue());
+        } else {
+            temp = this.parallelByDistanceUnder(table.getCurrentValue());
+        }
+        return temp;
     }
 
     private boolean isCursorOver(Point cursor, Double line) {
@@ -172,6 +180,9 @@ public class ConstructionLine extends AbstractLine implements Drawable {
 
     @Override
     public double ptDist(Point cursorPosition) {
-        return this.line.ptLineDist(cursorPosition);
+        if (line != null) {
+            return this.line.ptLineDist(cursorPosition);
+        }
+        return java.lang.Double.MAX_VALUE;
     }
 }

@@ -168,6 +168,9 @@ public class MouseHandler extends MouseInputAdapter{
                         }
                         table.traceAngleLine();
                         break;
+                    case CONSTRUCTION_P:
+                        table.addParallel();
+                        break;
                     default:
                         break;
                 }

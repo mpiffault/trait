@@ -63,4 +63,9 @@ public class Curve implements Drawable {
         HashSet<Point> pointHashSet = new HashSet<Point>();
         return pointHashSet;
     }
+
+    @Override
+    public void drawNearest(Graphics2D g2) {
+        
+    }
 }

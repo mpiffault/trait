@@ -111,14 +111,14 @@ public class Table extends JPanel {
             }
         }
 
-        nearestIntersectableList.stream().filter(intersectable -> intersectable instanceof Drawable)
-        .forEach(intersectable -> ((Drawable)intersectable).drawHightlighted(g2));
+        nearestIntersectableList.stream().filter(Objects::nonNull)
+        .forEach(intersectable -> intersectable.drawHightlighted(g2));
 
         if (this.nearestIntersectable != null) {
             this.nearestIntersectable.drawNearest(g2);
         }
         if (this.nearestSnapPoint != null) {
-            this.nearestSnapPoint.drawHightlighted(g2);
+            this.nearestSnapPoint.drawNearest(g2);
         }
         if (this.ongoingSelectionBox()) {
             this.selectionBox.draw(g2);
@@ -446,5 +446,11 @@ public class Table extends JPanel {
 
     public void setCurrentValue(double currentValue) {
         this.currentValue = currentValue;
+    }
+
+    public void addParallel() {
+        if (this.nearestIntersectable != null && this.nearestIntersectable instanceof ConstructionLine) {
+            this.constructionLayer.add(((ConstructionLine) this.nearestIntersectable).getParrallelLineByDistance());
+        }
     }
 }

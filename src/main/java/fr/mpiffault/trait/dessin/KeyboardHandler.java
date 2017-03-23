@@ -48,6 +48,11 @@ public class KeyboardHandler extends KeyAdapter {
             default:
                 break;
         }
+        captureValueChange(keyEvent);
+        this.table.repaint();
+    }
+
+    private void captureValueChange(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() >= VK_0 && keyEvent.getKeyCode() <= VK_9) {
             if (typingDigits) {
                 table.setCurrentValue(table.getCurrentValue() * 10.0 + doubleFromDigit(keyEvent));
@@ -58,7 +63,6 @@ public class KeyboardHandler extends KeyAdapter {
         } else if (keyEvent.getKeyCode() != VK_SHIFT){
             typingDigits = false;
         }
-        this.table.repaint();
     }
 
     private double doubleFromDigit (KeyEvent keyEvent) {

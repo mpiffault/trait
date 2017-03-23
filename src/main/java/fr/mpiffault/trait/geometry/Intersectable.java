@@ -1,11 +1,9 @@
 package fr.mpiffault.trait.geometry;
 
-import java.awt.*;
+import fr.mpiffault.trait.dessin.Drawable;
 
-public interface Intersectable {
+public interface Intersectable extends Drawable {
     Point[] getIntersection(Intersectable otherIntersectable);
 
     double ptDist(Point cursorPosition);
-
-    void drawNearest(Graphics2D g2);
 }

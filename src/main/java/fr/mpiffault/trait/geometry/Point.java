@@ -62,6 +62,15 @@ public class Point extends Point2D.Double implements Drawable, Selectable {
     }
 
     @Override
+    public void drawNearest(Graphics2D g2) {
+        BasicStroke basicStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f);
+        g2.setStroke(basicStroke);
+        g2.setColor(Color.RED);
+        this.drawPoint(g2);
+        g2.setStroke(new BasicStroke());
+    }
+
+    @Override
     public void drawSelected(Graphics2D g2) {
         g2.setColor(Table.SELECTED);
         this.drawPoint(g2);

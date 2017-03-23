@@ -13,4 +13,6 @@ public interface Drawable {
     void drawHightlighted(Graphics2D g2);
 
     HashSet<Point> getPointSet();
+
+    void drawNearest(Graphics2D g2);
 }
