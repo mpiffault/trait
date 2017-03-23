@@ -13,6 +13,8 @@ public enum ModeEnum {
     SEGMENT_V("SEGMENT VERTICAL", KeyEvent.VK_V, SEGMENT),
     SEGMENT_A("SEGMENT ANGLE", KeyEvent.VK_A, SEGMENT),
 
+    CIRCLE("CIRCLE", KeyEvent.VK_O, null),
+
     CURVE("CURVE", KeyEvent.VK_Y, null),
 
     CONSTRUCTION("CONSTRUCTION", KeyEvent.VK_C, null),

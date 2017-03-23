@@ -3,6 +3,7 @@ package fr.mpiffault.trait.geometry;
 import java.awt.geom.Line2D;
 
 public abstract class AbstractLine extends Line2D.Double implements Intersectable {
+
     public AbstractLine(Point firstPoint, Point secondPoint) {
         super.x1 = firstPoint.getX();
         super.y1 = firstPoint.getY();
