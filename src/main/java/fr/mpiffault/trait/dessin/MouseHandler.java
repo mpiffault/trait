@@ -8,10 +8,12 @@ import java.awt.event.MouseEvent;
 
 public class MouseHandler extends MouseInputAdapter{
     public static final double SNAP_UPDATE_INTERVAL = 50D;
-    private final Table table;
+    private Table table;
+    private OngoingAction ongoingAction;
 
     public MouseHandler(Table table) {
         this.table = table;
+        this.ongoingAction = table.getOngoingAction();
     }
 
     private long previousTime = System.currentTimeMillis();
@@ -103,10 +105,6 @@ public class MouseHandler extends MouseInputAdapter{
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             table.setOngoingClick(true);
-        }
-        switch (table.getCurrentMode()) {
-            default:
-                break;
         }
     }
 

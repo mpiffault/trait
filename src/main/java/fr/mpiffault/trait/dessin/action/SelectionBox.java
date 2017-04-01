@@ -1,6 +1,7 @@
 package fr.mpiffault.trait.dessin.action;
 
 import fr.mpiffault.trait.dessin.Drawable;
+import fr.mpiffault.trait.dessin.DrawableAdapter;
 import fr.mpiffault.trait.dessin.Table;
 import fr.mpiffault.trait.geometry.Point;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 
-public class SelectionBox implements Drawable{
+public class SelectionBox extends DrawableAdapter{
     private final Point startPoint;
     @Getter
     @Setter
@@ -25,16 +26,6 @@ public class SelectionBox implements Drawable{
         g2.setColor(Table.FOREGROUND);
         g2.drawRect((int)startPoint.getX(), (int)startPoint.getY(),
                 (int)(endPoint.getX() - startPoint.getX()), (int)(endPoint.getY() - startPoint.getY()));
-    }
-
-    @Override
-    public void drawTemporary(Graphics2D g2) {
-
-    }
-
-    @Override
-    public void drawHightlighted(Graphics2D g2) {
-
     }
 
     @Override

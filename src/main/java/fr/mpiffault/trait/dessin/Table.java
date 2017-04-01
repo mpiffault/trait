@@ -1,6 +1,5 @@
 package fr.mpiffault.trait.dessin;
 
-import fr.mpiffault.trait.Utils;
 import fr.mpiffault.trait.dessin.action.SelectionBox;
 import fr.mpiffault.trait.dessin.action.TracingSegment;
 import fr.mpiffault.trait.geometry.*;
@@ -42,21 +41,25 @@ public class Table extends JPanel {
     private LinkedList<ConstructionLine> constructionLayer;
     private final Set<Selectable> selected = new LinkedHashSet<>();
 
-    private SelectionBox selectionBox;
-    private TracingSegment tracingSegment;
-    private ConstructionLine constructionLine;
-    private List<Intersectable> nearestIntersectableList;
-    private Intersectable nearestIntersectable;
-    private ArrayList<Point> nearestSnapPointList = new ArrayList<>();
-
     @Getter
-    private Point nearestSnapPoint;
-
-    private Curve tracingCurve;
+    private OngoingAction ongoingAction;
 
     @Getter
     @Setter
     private boolean ongoingClick;
+    private SelectionBox selectionBox;
+    private TracingSegment tracingSegment;
+    private ConstructionLine tracingConstructionLine;
+
+    private Curve tracingCurve;
+    private List<Intersectable> nearestIntersectableList;
+
+    private Intersectable nearestIntersectable;
+
+    private ArrayList<Point> nearestSnapPointList = new ArrayList<>();
+
+    @Getter
+    private Point nearestSnapPoint;
 
     private boolean logLength = false;
     private boolean logCoeff = false;
@@ -75,6 +78,8 @@ public class Table extends JPanel {
         constructionLayer = new LinkedList<>();
 
         nearestIntersectableList = new ArrayList<>();
+
+        ongoingAction = new OngoingAction(this);
     }
 
     /* DRAWING */
@@ -120,6 +125,9 @@ public class Table extends JPanel {
         if (this.nearestSnapPoint != null) {
             this.nearestSnapPoint.drawNearest(g2);
         }
+
+
+        // TODO : this.ongoingAction.draw(g2);
         if (this.ongoingSelectionBox()) {
             this.selectionBox.draw(g2);
         }
@@ -127,11 +135,13 @@ public class Table extends JPanel {
             this.tracingSegment.draw(g2);
         }
         if (this.ongoingConstructionLine()) {
-            this.constructionLine.draw(g2);
+            this.tracingConstructionLine.draw(g2);
         }
         if (ongoingCurve()) {
             this.tracingCurve.draw(g2);
         }
+
+
     }
 
     private void paintModeLabel(Graphics2D g2) {
@@ -153,9 +163,10 @@ public class Table extends JPanel {
     }
 
     public void cancelCurrentAction() {
+        // TODO : ongoingAction.cancel();
         this.selectionBox = null;
         this.tracingSegment = null;
-        this.constructionLine = null;
+        this.tracingConstructionLine = null;
         this.ongoingClick = false;
     }
 
@@ -247,14 +258,14 @@ public class Table extends JPanel {
     /* SEGMENT */
 
     public void initSegmentTrace() {
-        Point initPoint = getClicPoint();
+        Point initPoint = getEffectivePoint();
         this.tracingSegment = new TracingSegment(initPoint);
         if (isDebugMode()) {
             System.out.println("initSegment");
         }
     }
 
-    private Point getClicPoint() {
+    private Point getEffectivePoint() {
         return this.nearestSnapPoint != null ? this.nearestSnapPoint : this.cursorPosition;
     }
 
@@ -264,7 +275,7 @@ public class Table extends JPanel {
 
     public void updateTracingSegment() {
         if (ongoingSegment()) {
-            this.tracingSegment.setEndPoint(getClicPoint());
+            this.tracingSegment.setEndPoint(getEffectivePoint());
             if (isLogLength()) {
                 System.out.println("Length : " + tracingSegment.getLength());
             }
@@ -283,32 +294,32 @@ public class Table extends JPanel {
     /* CONSTRUCTION */
 
     public void initConstructionLineTrace() {
-        constructionLine = new ConstructionLine(getClicPoint(), getClicPoint(), this);
+        tracingConstructionLine = new ConstructionLine(getEffectivePoint(), getEffectivePoint(), this);
     }
 
     public void updateTracingConstructionLine() {
         if (ongoingConstructionLine()) {
-            this.constructionLine.setSecondPoint(this.cursorPosition);
+            this.tracingConstructionLine.setSecondPoint(this.cursorPosition);
         }
     }
 
     public boolean ongoingConstructionLine() {
-        return this.constructionLine != null;
+        return this.tracingConstructionLine != null;
     }
 
     public void endConstructionLine() {
-        if (constructionLine != null) {
-            constructionLine.setSecondPoint(getClicPoint());
+        if (tracingConstructionLine != null) {
+            tracingConstructionLine.setSecondPoint(getEffectivePoint());
         }
-        constructionLayer.add(constructionLine);
-        constructionLine = null;
+        constructionLayer.add(tracingConstructionLine);
+        tracingConstructionLine = null;
     }
 
     public void traceHorizontalLine() {
-        constructionLine = new ConstructionLine(getClicPoint(),
-                new Point(getClicPoint().getX() + 1, getClicPoint().getY()), this);
-        constructionLayer.add(constructionLine);
-        constructionLine = null;
+        tracingConstructionLine = new ConstructionLine(getEffectivePoint(),
+                new Point(getEffectivePoint().getX() + 1, getEffectivePoint().getY()), this);
+        constructionLayer.add(tracingConstructionLine);
+        tracingConstructionLine = null;
     }
 
     public void endHorizontalLine() {
@@ -316,10 +327,10 @@ public class Table extends JPanel {
     }
 
     public void traceVerticalLine() {
-        constructionLine = new ConstructionLine(getClicPoint(),
-                new Point(getClicPoint().getX(), getClicPoint().getY() + 1), this);
-        constructionLayer.add(constructionLine);
-        constructionLine = null;
+        tracingConstructionLine = new ConstructionLine(getEffectivePoint(),
+                new Point(getEffectivePoint().getX(), getEffectivePoint().getY() + 1), this);
+        constructionLayer.add(tracingConstructionLine);
+        tracingConstructionLine = null;
     }
 
     public void endVerticalLine() {
@@ -420,14 +431,14 @@ public class Table extends JPanel {
 
     public void initCurveTrace() {
         if (!ongoingCurve()) {
-            tracingCurve = new Curve(getClicPoint());
+            tracingCurve = new Curve(getEffectivePoint());
             System.out.println("Init curve at : " + this.cursorPosition);
         }
     }
 
     public void addCurvePoint() {
         if (ongoingCurve()) {
-            tracingCurve.addPoint(getClicPoint());
+            tracingCurve.addPoint(getEffectivePoint());
             System.out.println("Added point : " + this.cursorPosition);
         }
     }
